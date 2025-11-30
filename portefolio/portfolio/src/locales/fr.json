@@ -1,0 +1,83 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "about": "À propos",
+    "skills": "Compétences",
+    "projects": "Projets",
+    "contact": "Contact",
+    "cv": "CV"
+  },
+  "hero": {
+    "greeting": "Bonjour, je suis",
+    "title": "Développeur Full Stack Junior",
+    "description": "Étudiant en développement Fullstack et Data Analyst à Epitech",
+    "viewProjects": "Voir mes projets",
+    "contactMe": "Me contacter"
+  },
+  "about": {
+    "title": "À propos de moi",
+    "intro": "Étudiant en Master of Science Numérique à Epitech Lyon, je suis passionné par le développement Fullstack et l'analyse des donnée.",
+    "desc": "Avec une double compétence en développement et en gestion, je cherche à contribuer à des projets innovants particulierement dans le secteur de la santé mais restant ouvert au reste des domaines.",
+    "location": "Localisation",
+    "status": "Statut",
+    "statusValue": "En alternance",
+    "email": "Email",
+    "phone": "Téléphone",
+    "downloadCV": "Télécharger mon CV"
+  },
+  "skills": {
+    "title": "Compétences Techniques",
+    "subtitle": "Technologies et outils que j'utilise",
+    "softSkills": "Soft Skills",
+    "adaptation": "Adaptation rapide",
+    "rigor": "Rigueur",
+    "teamwork": "Travail d'équipe",
+    "ethics": "Sens de l'éthique",
+    "confidentiality": "Confidentialité",
+    "english": "Anglais C1"
+  },
+  "projects": {
+    "title": "Mes Projets",
+    "viewMore": "Voir plus sur GitHub",
+    "status": {
+      "inProgress": "En cours",
+      "academic": "Académique"
+    }
+  },
+  "contact": {
+    "title": "Me Contacter",
+    "subtitle": "Vous avez un projet ou une opportunité d'alternance ? Contactez-moi !",
+    "info": "Informations",
+    "location": "Localisation",
+    "availability": "Disponibilité",
+    "availabilityValue": "Disponible en alternance",
+    "findMe": "Retrouvez-moi sur",
+    "sendMessage": "Envoyez un message",
+    "form": {
+      "name": "Nom",
+      "namePlaceholder": "Votre nom",
+      "email": "Email",
+      "emailPlaceholder": "votre.email@example.com",
+      "subject": "Sujet",
+      "subjectPlaceholder": "Opportunité d'alternance",
+      "message": "Message",
+      "messagePlaceholder": "Votre message...",
+      "send": "Envoyer le message",
+      "sending": "Envoi en cours...",
+      "success": "Message envoyé avec succès !",
+      "error": "Erreur lors de l'envoi. Veuillez réessayer.",
+      "validation": {
+        "nameRequired": "Le nom est requis",
+        "emailRequired": "L'email est requis",
+        "emailInvalid": "Email invalide",
+        "subjectRequired": "Le sujet est requis",
+        "messageRequired": "Le message est requis"
+      }
+    }
+  },
+  "footer": {
+    "description": "Développeur Full Stack Junior passionné par la création d'applications web modernes.",
+    "navigation": "Navigation",
+    "contact": "Contact"
+  }
+}
