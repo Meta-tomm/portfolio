@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../../context/themecontext";
 import { useScrollAnimation } from "../../hooks/UseScrollAnimation";
@@ -10,8 +10,14 @@ function Projects() {
   const { isDark } = useTheme();
   const { t } = useTranslation();
   const [selectedProject, setSelectedProject] = useState(null);
+  const [projects, setProjects] = useState([]);
 
-  const projects = [
+  useEffect(() => {
+    const savedProjects = localStorage.getItem('portfolio_projects');
+    if (savedProjects) {
+      setProjects(JSON.parse(savedProjects));
+    } else {
+      const defaultProjects = [
     {
       id: 1,
       title: "Indeed Be Like",
@@ -69,6 +75,10 @@ function Projects() {
       gradient: "from-green-500 to-emerald-500",
     },
   ];
+      setProjects(defaultProjects);
+      localStorage.setItem('portfolio_projects', JSON.stringify(defaultProjects));
+    }
+  }, []);
 
   return (
     <section

@@ -11,14 +11,30 @@ function Navigation() {
     i18n.changeLanguage(lng);
   };
 
+  const handleNavClick = (e, targetId) => {
+    e.preventDefault();
+    const element = document.getElementById(targetId);
+    if (element) {
+      const navbarHeight = 64;
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - navbarHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+      setMenuOpen(false);
+    }
+  };
+
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 ${
         isDark ? "bg-black/90" : "bg-white/90"
-      } backdrop-blur-md`}
+      } backdrop-blur-md transition-all duration-300`}
     >
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-16 transition-all duration-200">
           <div
             className={`text-xl font-bold ${
               isDark ? "text-white" : "text-gray-900"
@@ -30,51 +46,56 @@ function Navigation() {
           <div className="hidden md:flex gap-8 items-center">
             <a
               href="#home"
+              onClick={(e) => handleNavClick(e, 'home')}
               className={`${
                 isDark
                   ? "text-gray-300 hover:text-white"
                   : "text-gray-600 hover:text-gray-900"
-              }`}
+              } transition-colors inline-block text-center min-w-[80px]`}
             >
               {t("nav.home")}
             </a>
             <a
               href="#about"
+              onClick={(e) => handleNavClick(e, 'about')}
               className={`${
                 isDark
                   ? "text-gray-300 hover:text-white"
                   : "text-gray-600 hover:text-gray-900"
-              }`}
+              } transition-colors inline-block text-center min-w-[80px]`}
             >
               {t("nav.about")}
             </a>
             <a
               href="#skills"
+              onClick={(e) => handleNavClick(e, 'skills')}
               className={`${
                 isDark
                   ? "text-gray-300 hover:text-white"
                   : "text-gray-600 hover:text-gray-900"
-              }`}
+              } transition-colors inline-block text-center min-w-[80px]`}
             >
               {t("nav.skills")}
             </a>
             <a
               href="#projects"
+              onClick={(e) => handleNavClick(e, 'projects')}
               className={`${
                 isDark
                   ? "text-gray-300 hover:text-white"
                   : "text-gray-600 hover:text-gray-900"
-              }`}
+              } transition-colors inline-block text-center min-w-[80px]`}
             >
               {t("nav.projects")}
             </a>
             <a
               href="#contact"
+              onClick={(e) => handleNavClick(e, 'contact')}
               className={`${
                 isDark
                   ? "text-gray-300 hover:text-white"
                   : "text-gray-600 hover:text-gray-900"
-              }`}
+              } transition-colors inline-block text-center min-w-[80px]`}
             >
               {t("nav.contact")}
             </a>
@@ -83,7 +104,7 @@ function Navigation() {
             <div className="flex gap-2">
               <button
                 onClick={() => changeLanguage("fr")}
-                className={`px-2 py-1 rounded text-sm font-medium transition-colors ${
+                className={`w-12 py-1 rounded text-sm font-medium transition-colors ${
                   i18n.language === "fr"
                     ? "bg-blue-600 text-white"
                     : isDark
@@ -95,7 +116,7 @@ function Navigation() {
               </button>
               <button
                 onClick={() => changeLanguage("en")}
-                className={`px-2 py-1 rounded text-sm font-medium transition-colors ${
+                className={`w-12 py-1 rounded text-sm font-medium transition-colors ${
                   i18n.language === "en"
                     ? "bg-blue-600 text-white"
                     : isDark
@@ -172,48 +193,53 @@ function Navigation() {
           <div className="px-4 py-2 space-y-2">
             <a
               href="#home"
+              onClick={(e) => handleNavClick(e, 'home')}
               className={`block py-2 ${
                 isDark ? "text-gray-300" : "text-gray-700"
-              }`}
+              } transition-colors`}
             >
               {t("nav.home")}
             </a>
             <a
               href="#about"
+              onClick={(e) => handleNavClick(e, 'about')}
               className={`block py-2 ${
                 isDark ? "text-gray-300" : "text-gray-700"
-              }`}
+              } transition-colors`}
             >
               {t("nav.about")}
             </a>
             <a
               href="#skills"
+              onClick={(e) => handleNavClick(e, 'skills')}
               className={`block py-2 ${
                 isDark ? "text-gray-300" : "text-gray-700"
-              }`}
+              } transition-colors`}
             >
               {t("nav.skills")}
             </a>
             <a
               href="#projects"
+              onClick={(e) => handleNavClick(e, 'projects')}
               className={`block py-2 ${
                 isDark ? "text-gray-300" : "text-gray-700"
-              }`}
+              } transition-colors`}
             >
               {t("nav.projects")}
             </a>
             <a
               href="#contact"
+              onClick={(e) => handleNavClick(e, 'contact')}
               className={`block py-2 ${
                 isDark ? "text-gray-300" : "text-gray-700"
-              }`}
+              } transition-colors`}
             >
               {t("nav.contact")}
             </a>
             <div className="flex gap-2 py-2">
               <button
                 onClick={() => changeLanguage("fr")}
-                className={`px-3 py-1 rounded ${
+                className={`w-12 py-1 rounded ${
                   i18n.language === "fr"
                     ? "bg-blue-600 text-white"
                     : "bg-gray-700 text-gray-300"
@@ -223,7 +249,7 @@ function Navigation() {
               </button>
               <button
                 onClick={() => changeLanguage("en")}
-                className={`px-3 py-1 rounded ${
+                className={`w-12 py-1 rounded ${
                   i18n.language === "en"
                     ? "bg-blue-600 text-white"
                     : "bg-gray-700 text-gray-300"

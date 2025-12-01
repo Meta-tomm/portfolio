@@ -12,9 +12,22 @@ export function ThemeProvider({ children }) {
     }
   }, []);
 
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      '--theme-transition',
+      'background-color 0.3s ease-in-out, color 0.3s ease-in-out, border-color 0.3s ease-in-out'
+    );
+  }, []);
+
   const toggleTheme = () => {
+    document.documentElement.classList.add('theme-transitioning');
+
     setIsDark(!isDark);
     localStorage.setItem("theme", !isDark ? "dark" : "light");
+
+    setTimeout(() => {
+      document.documentElement.classList.remove('theme-transitioning');
+    }, 300);
   };
 
   return (
