@@ -1,0 +1,28 @@
+# fly.toml app configuration file generated for portfolio-frontend-green-field-7104 on 2025-12-02T12:04:15+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'portfolio-frontend-green-field-7104'
+primary_region = 'cdg'
+
+[build]
+  dockerfile = 'Dockerfile'
+  [build.args]
+    VITE_API_URL = "https://portfolio-backend-holy-frog-7300.fly.dev"
+    VITE_EMAILJS_SERVICE_ID = "service_0o0f1bz"
+    VITE_EMAILJS_TEMPLATE_ID = "template_ozxsgma"
+    VITE_EMAILJS_PUBLIC_KEY = "EZJWD8HEaVgt1Onsm"
+
+[http_service]
+  internal_port = 80
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  memory = '256mb'
+  cpu_kind = 'shared'
+  cpus = 1
