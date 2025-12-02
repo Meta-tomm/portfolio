@@ -1,0 +1,41 @@
+services:
+  - type: web
+    name: portfolio-backend
+    runtime: docker
+    dockerfilePath: ./Dockerfile.backend
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        fromDatabase:
+          name: portfolio-mongodb
+          property: connectionString
+      - key: ADMIN_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        sync: false
+    healthCheckPath: /api/health
+
+  - type: web
+    name: portfolio-frontend
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: portfolio-backend
+          property: host
+      - key: VITE_EMAILJS_SERVICE_ID
+        sync: false
+      - key: VITE_EMAILJS_TEMPLATE_ID
+        sync: false
+      - key: VITE_EMAILJS_PUBLIC_KEY
+        sync: false
+
+databases:
+  - name: portfolio-mongodb
+    databaseName: portfolio
+    user: portfolio
