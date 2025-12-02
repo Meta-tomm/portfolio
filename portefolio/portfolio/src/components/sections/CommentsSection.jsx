@@ -54,7 +54,7 @@ const CommentsSection = () => {
   return (
     <section
       id="comments"
-      className={`relative py-20 overflow-hidden ${
+      className={`relative py-20 overflow-hidden transition-colors duration-500 ${
         isDark
           ? "bg-gradient-to-b from-gray-900 via-blue-900 to-black"
           : "bg-gradient-to-b from-blue-50 via-white to-gray-50"
@@ -65,7 +65,7 @@ const CommentsSection = () => {
         {stars.map((star) => (
           <div
             key={star.id}
-            className={`absolute rounded-full ${
+            className={`absolute rounded-full transition-colors duration-500 ${
               isDark ? "bg-white" : "bg-blue-400"
             } animate-twinkle`}
             style={{
@@ -80,13 +80,13 @@ const CommentsSection = () => {
         ))}
 
         <div
-          className={`absolute w-96 h-96 rounded-full blur-3xl opacity-20 animate-float ${
+          className={`absolute w-96 h-96 rounded-full blur-3xl opacity-20 animate-float transition-colors duration-700 ${
             isDark ? "bg-blue-500" : "bg-blue-300"
           }`}
           style={{ top: "10%", left: "10%" }}
         />
         <div
-          className={`absolute w-96 h-96 rounded-full blur-3xl opacity-20 animate-float-delayed ${
+          className={`absolute w-96 h-96 rounded-full blur-3xl opacity-20 animate-float-delayed transition-colors duration-700 ${
             isDark ? "bg-purple-500" : "bg-purple-300"
           }`}
           style={{ bottom: "10%", right: "10%" }}
