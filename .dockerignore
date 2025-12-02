@@ -1,0 +1,15 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+.env
+.DS_Store
+dist
+build
+*.md
+.idea
+.vscode
+*.log
+portefolio/backend/node_modules
+portefolio/portfolio/node_modules
+portefolio/portfolio/dist
