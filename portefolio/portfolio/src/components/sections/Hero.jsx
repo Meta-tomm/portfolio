@@ -6,19 +6,92 @@ function Hero() {
   const { isDark } = useTheme();
   const { t } = useTranslation();
   const [stars, setStars] = useState([]);
+  const [shootingStars, setShootingStars] = useState([]);
+  const [planets, setPlanets] = useState([]);
+  const [deepSpaceElements, setDeepSpaceElements] = useState([]);
 
   useEffect(() => {
-    // Generate random stars for the night theme
-    // Note: j'ai mis 100 étoiles mais peut-être trop ? à tester sur mobile
-    const newStars = Array.from({ length: 100 }, (_, i) => ({
+    // Génération de 200 étoiles avec différentes propriétés
+    const newStars = Array.from({ length: 200 }, (_, i) => {
+      const sizeType = Math.random();
+      let size, opacity, hasGlow, animationSpeed;
+
+      // 70% petites étoiles
+      if (sizeType < 0.7) {
+        size = Math.random() * 1.5 + 0.5;
+        opacity = Math.random() * 0.5 + 0.3;
+        hasGlow = false;
+        animationSpeed = 'twinkle';
+      }
+      // 20% étoiles moyennes
+      else if (sizeType < 0.9) {
+        size = Math.random() * 2 + 1.5;
+        opacity = Math.random() * 0.3 + 0.6;
+        hasGlow = Math.random() > 0.5;
+        animationSpeed = 'twinkle-slow';
+      }
+      // 10% grandes étoiles brillantes
+      else {
+        size = Math.random() * 2 + 2.5;
+        opacity = Math.random() * 0.2 + 0.8;
+        hasGlow = true;
+        animationSpeed = 'twinkle-fast';
+      }
+
+      return {
+        id: i,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        size,
+        opacity,
+        hasGlow,
+        animationSpeed,
+        delay: Math.random() * 5,
+      };
+    });
+    setStars(newStars);
+
+    // Génération de 5 étoiles filantes
+    const newShootingStars = Array.from({ length: 5 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 50,
+      y: Math.random() * 50,
+      delay: Math.random() * 10 + i * 5,
+    }));
+    setShootingStars(newShootingStars);
+
+    // Génération de 4 planètes
+    const planetTypes = [
+      { color: 'from-blue-400 to-blue-600', size: 40, hasRing: false, ringColor: '' },
+      { color: 'from-orange-400 to-red-500', size: 50, hasRing: true, ringColor: 'border-orange-300/30' },
+      { color: 'from-purple-400 to-pink-500', size: 35, hasRing: false, ringColor: '' },
+      { color: 'from-cyan-300 to-blue-400', size: 45, hasRing: true, ringColor: 'border-cyan-200/20' },
+    ];
+
+    const newPlanets = planetTypes.map((type, i) => ({
+      id: i,
+      x: 10 + i * 25,
+      y: 15 + (i % 2) * 60,
+      size: type.size,
+      color: type.color,
+      hasRing: type.hasRing,
+      ringColor: type.ringColor,
+      floatDelay: i * 2,
+    }));
+    setPlanets(newPlanets);
+
+    // Génération d'éléments de profondeur
+    const newDeepSpaceElements = Array.from({ length: 8 }, (_, i) => ({
       id: i,
       x: Math.random() * 100,
       y: Math.random() * 100,
-      size: Math.random() * 2 + 1,
-      duration: Math.random() * 3 + 2,
-      delay: Math.random() * 2,
+      size: Math.random() * 80 + 40,
+      opacity: Math.random() * 0.1 + 0.05,
+      blur: Math.random() * 2 + 1,
+      color: i % 3 === 0 ? 'bg-purple-500' : i % 3 === 1 ? 'bg-blue-500' : 'bg-indigo-500',
+      delay: Math.random() * 4,
     }));
-    setStars(newStars);
+    setDeepSpaceElements(newDeepSpaceElements);
   }, []);
 
   return (
@@ -30,39 +103,155 @@ function Hero() {
           : "bg-gradient-to-b from-blue-50 via-white to-gray-50"
       }`}
     >
-      {/* Animated stars - only visible in dark mode */}
-      {isDark && (
-        <div className="absolute inset-0 overflow-hidden">
-          {stars.map((star) => (
-            <div
-              key={star.id}
-              className="absolute rounded-full bg-white animate-twinkle"
-              style={{
-                left: `${star.x}%`,
-                top: `${star.y}%`,
-                width: `${star.size}px`,
-                height: `${star.size}px`,
-                animationDuration: `${star.duration}s`,
-                animationDelay: `${star.delay}s`,
-              }}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* Floating particles background */}
+      {/* Fond étoilé cosmique avec planètes */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Couche de profondeur - Galaxies et nébuleuses lointaines */}
+        {deepSpaceElements.map((element) => (
+          <div
+            key={`deep-${element.id}`}
+            className={`absolute rounded-full ${element.color} animate-depth-float transition-opacity duration-1000`}
+            style={{
+              left: `${element.x}%`,
+              top: `${element.y}%`,
+              width: `${element.size}px`,
+              height: `${element.size}px`,
+              opacity: isDark ? element.opacity : element.opacity * 0.5,
+              filter: `blur(${element.blur * 20}px)`,
+              animationDelay: `${element.delay}s`,
+            }}
+          />
+        ))}
+
+        {/* Planètes avec anneaux */}
+        {planets.map((planet) => (
+          <div
+            key={`planet-${planet.id}`}
+            className="absolute animate-depth-float"
+            style={{
+              left: `${planet.x}%`,
+              top: `${planet.y}%`,
+              animationDelay: `${planet.floatDelay}s`,
+            }}
+          >
+            {/* Corps de la planète */}
+            <div
+              className={`relative rounded-full bg-gradient-to-br ${planet.color} animate-rotate-planet shadow-2xl`}
+              style={{
+                width: `${planet.size}px`,
+                height: `${planet.size}px`,
+                boxShadow: isDark
+                  ? `0 0 ${planet.size / 2}px rgba(255, 255, 255, 0.2), inset -${planet.size / 4}px -${planet.size / 4}px ${planet.size / 2}px rgba(0, 0, 0, 0.5)`
+                  : `0 0 ${planet.size / 3}px rgba(0, 0, 0, 0.2), inset -${planet.size / 4}px -${planet.size / 4}px ${planet.size / 2}px rgba(0, 0, 0, 0.3)`,
+                opacity: isDark ? 0.9 : 0.7,
+              }}
+            >
+              {/* Reflet de lumière sur la planète */}
+              <div
+                className="absolute top-2 left-2 rounded-full bg-white/30"
+                style={{
+                  width: `${planet.size / 4}px`,
+                  height: `${planet.size / 4}px`,
+                  filter: 'blur(4px)',
+                }}
+              />
+            </div>
+
+            {/* Anneau de la planète */}
+            {planet.hasRing && (
+              <div
+                className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 ${planet.ringColor}`}
+                style={{
+                  width: `${planet.size * 1.6}px`,
+                  height: `${planet.size * 0.3}px`,
+                  transform: 'translate(-50%, -50%) rotateX(75deg)',
+                  borderWidth: `${planet.size / 15}px`,
+                  opacity: isDark ? 0.6 : 0.4,
+                }}
+              />
+            )}
+          </div>
+        ))}
+
+        {/* Étoiles normales avec différentes tailles et brillances */}
+        {stars.map((star) => (
+          <div
+            key={star.id}
+            className={`absolute rounded-full transition-colors duration-500 ${
+              isDark ? "bg-white" : "bg-blue-400"
+            } animate-${star.animationSpeed} ${
+              star.hasGlow ? 'animate-pulse-glow' : ''
+            }`}
+            style={{
+              left: `${star.x}%`,
+              top: `${star.y}%`,
+              width: `${star.size}px`,
+              height: `${star.size}px`,
+              opacity: star.opacity,
+              animationDelay: `${star.delay}s`,
+              boxShadow: star.hasGlow && isDark
+                ? `0 0 ${star.size * 2}px rgba(255, 255, 255, 0.8), 0 0 ${star.size * 4}px rgba(147, 197, 253, 0.4)`
+                : star.hasGlow
+                ? `0 0 ${star.size * 2}px rgba(59, 130, 246, 0.8), 0 0 ${star.size * 4}px rgba(59, 130, 246, 0.4)`
+                : 'none',
+            }}
+          />
+        ))}
+
+        {/* Étoiles filantes */}
+        {shootingStars.map((star) => (
+          <div
+            key={`shooting-${star.id}`}
+            className="absolute"
+            style={{
+              left: `${star.x}%`,
+              top: `${star.y}%`,
+              animationDelay: `${star.delay}s`,
+            }}
+          >
+            <div
+              className={`w-1 h-1 rounded-full animate-shooting-star ${
+                isDark ? "bg-white" : "bg-blue-300"
+              }`}
+              style={{
+                boxShadow: isDark
+                  ? '0 0 2px 1px rgba(255, 255, 255, 0.9), 0 0 10px 2px rgba(147, 197, 253, 0.5)'
+                  : '0 0 2px 1px rgba(59, 130, 246, 0.9), 0 0 10px 2px rgba(59, 130, 246, 0.5)',
+              }}
+            >
+              {/* Trainée de l'étoile filante */}
+              <div
+                className={`absolute w-20 h-0.5 ${
+                  isDark ? "bg-gradient-to-r from-white to-transparent" : "bg-gradient-to-r from-blue-300 to-transparent"
+                }`}
+                style={{
+                  top: '50%',
+                  left: '-20px',
+                  transform: 'translateY(-50%)',
+                  opacity: 0.6,
+                }}
+              />
+            </div>
+          </div>
+        ))}
+
+        {/* Nébuleuses de fond */}
         <div
-          className={`absolute w-96 h-96 rounded-full blur-3xl opacity-20 animate-float ${
+          className={`absolute w-96 h-96 rounded-full blur-3xl opacity-20 animate-float transition-colors duration-700 ${
             isDark ? "bg-blue-500" : "bg-blue-300"
           }`}
           style={{ top: "10%", left: "10%" }}
         />
         <div
-          className={`absolute w-96 h-96 rounded-full blur-3xl opacity-20 animate-float-delayed ${
+          className={`absolute w-96 h-96 rounded-full blur-3xl opacity-20 animate-float-delayed transition-colors duration-700 ${
             isDark ? "bg-purple-500" : "bg-purple-300"
           }`}
           style={{ bottom: "10%", right: "10%" }}
+        />
+        <div
+          className={`absolute w-72 h-72 rounded-full blur-3xl opacity-10 animate-float transition-colors duration-700 ${
+            isDark ? "bg-cyan-500" : "bg-cyan-300"
+          }`}
+          style={{ top: "50%", right: "20%", animationDelay: "1s" }}
         />
       </div>
 

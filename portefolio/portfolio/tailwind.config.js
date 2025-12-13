@@ -7,7 +7,7 @@ export default {
         'twinkle': 'twinkle 3s ease-in-out infinite',
         'twinkle-slow': 'twinkle 4s ease-in-out infinite',
         'twinkle-fast': 'twinkle 2s ease-in-out infinite',
-        'shooting-star': 'shooting-star 3s linear infinite',
+        'shooting-star': 'shooting-star 4s linear infinite',
         'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
         'float': 'float 6s ease-in-out infinite',
         'float-delayed': 'float 8s ease-in-out infinite 2s',
@@ -49,6 +49,32 @@ export default {
           },
           '50%': {
             transform: 'translateY(-20px) translateX(10px)',
+          },
+        },
+        orbit: {
+          '0%': {
+            transform: 'rotate(0deg) translateX(100px) rotate(0deg)',
+          },
+          '100%': {
+            transform: 'rotate(360deg) translateX(100px) rotate(-360deg)',
+          },
+        },
+        'rotate-planet': {
+          '0%': {
+            transform: 'rotate(0deg)',
+          },
+          '100%': {
+            transform: 'rotate(360deg)',
+          },
+        },
+        'depth-float': {
+          '0%, 100%': {
+            transform: 'translateY(0) scale(1)',
+            opacity: '0.6',
+          },
+          '50%': {
+            transform: 'translateY(-30px) scale(1.05)',
+            opacity: '0.8',
           },
         },
       },

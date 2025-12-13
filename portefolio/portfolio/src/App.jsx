@@ -5,7 +5,7 @@ import Contact from "./components/sections/Contact";
 import Hero from "./components/sections/Hero";
 import Projects from "./components/sections/Project";
 import Skills from "./components/sections/Skills";
-import ScrollToTop from "./components/ui/ScrollToTop.jsx";
+import ScrollToTop from "./components/ui/ScrollToTop";
 
 // TODO: ajouter React Router pour navigation future ?
 function App() {
