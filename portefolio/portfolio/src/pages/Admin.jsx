@@ -1,63 +1,52 @@
-import { useState, useEffect } from 'react';
-import { FaStar, FaCheck, FaTrash, FaEye, FaHome, FaPlus, FaEdit, FaImage } from 'react-icons/fa';
+import { useState, useEffect, useCallback } from 'react';
+import { FaHome, FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
+// Mot de passe admin - vous pouvez le changer ici ou utiliser une variable d'environnement
+const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'hello?123';
+
 const Admin = () => {
-  const [comments, setComments] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [adminSecret, setAdminSecret] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState('comments');
   const [projects, setProjects] = useState([]);
   const [editingProject, setEditingProject] = useState(null);
   const [showProjectForm, setShowProjectForm] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api';
-
-  const fetchAllComments = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`${API_URL}/admin/comments`, {
-        headers: {
-          'x-admin-secret': adminSecret
-        }
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setComments(data.comments);
-        setIsAuthenticated(true);
-        setError('');
-      } else {
-        setError(data.message);
-        setIsAuthenticated(false);
-      }
-    } catch (err) {
-      setError('Erreur de connexion au serveur');
-      console.error('Error fetching comments:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      loadProjects();
-    }
-  }, [isAuthenticated]);
-
-  const loadProjects = () => {
+  const loadProjects = useCallback(() => {
     const savedProjects = localStorage.getItem('portfolio_projects');
     if (savedProjects) {
-      setProjects(JSON.parse(savedProjects));
+      let projects = JSON.parse(savedProjects);
+
+      // Vérifier si BankSecure existe, sinon l'ajouter
+      const bankSecureExists = projects.some(p =>
+        p.github === "https://github.com/Meta-tomm/BANKSECURE-JAVA-SPRING-TSX.git" ||
+        p.title?.includes("BankSecure") ||
+        p.title?.includes("BankFlow")
+      );
+
+      if (!bankSecureExists) {
+        const bankSecureProject = {
+          id: 5,
+          title: "BankSecure - Système Bancaire",
+          description: "API REST sécurisée pour gestion de transactions bancaires avec authentification JWT et système de micro-services. Gestion des comptes, virements, historique des transactions avec traçabilité complète et respect des normes de sécurité bancaire.",
+          technologies: ["Java", "Spring Boot", "PostgreSQL", "JWT"],
+          github: "https://github.com/Meta-tomm/BANKSECURE-JAVA-SPRING-TSX.git",
+          demo: null,
+          status: "academic",
+          gradient: "from-indigo-500 to-blue-500"
+        };
+        projects.push(bankSecureProject);
+        localStorage.setItem('portfolio_projects', JSON.stringify(projects));
+      }
+
+      setProjects(projects);
     } else {
       const defaultProjects = [
         {
           id: 1,
-          title: "Indeed Be Like",
-          description: "Clone d'Indeed - Plateforme de recherche d'emploi avec système de candidatures et gestion des offres. Interface moderne et responsive.",
+          title: "Recrute AI",
+          description: "Recrut AI - Plateforme de recherche d'emploi avec système de candidatures et gestion des offres. Interface moderne et responsive.",
           technologies: ["React", "Node.js", "JavaScript", "Tailwind"],
           github: "https://github.com/Meta-tomm/Site.git",
           demo: null,
@@ -83,23 +72,74 @@ const Admin = () => {
         },
         {
           id: 3,
-          title: "Système de Gestion Hospitalière",
-          description: "Projet académique - Application de gestion de données médicales respectant les normes FHIR/HL7 et RGPD.",
-          technologies: ["C#", ".NET", "MySQL", "FHIR/HL7"],
-          github: null,
+          title: "MediTrack .NET - Système de Gestion Hospitalier",
+          description: "Développement d'une API de gestion des dossiers patients avec implémentation stricte de la confidentialité des données via Identity. Optimisation des requêtes SQL avec Entity Framework pour traiter de gros volumes de données.",
+          technologies: ["C#", "ASP.NET Core 8", "Entity Framework", "SQL Server"],
+          github: "https://github.com/Meta-tomm/MEDITRACK.git",
           demo: null,
           status: "academic",
           gradient: "from-green-500 to-emerald-500"
+        },
+        {
+          id: 4,
+          title: "DataFin Predictor - Analyse de Données",
+          description: "Script d'automatisation pour l'analyse de flux de trésorerie. Utilisation de techniques de machine learning pour prédire les tendances financières et optimiser la gestion budgétaire.",
+          technologies: ["Python", "Pandas", "Scikit-learn"],
+          github: null,
+          demo: null,
+          status: "academic",
+          gradient: "from-orange-500 to-red-500"
+        },
+        {
+          id: 5,
+          title: "BankSecure - Système Bancaire",
+          description: "API REST sécurisée pour gestion de transactions bancaires avec authentification JWT et système de micro-services. Gestion des comptes, virements, historique des transactions avec traçabilité complète et respect des normes de sécurité bancaire.",
+          technologies: ["Java", "Spring Boot", "PostgreSQL", "JWT"],
+          github: "https://github.com/Meta-tomm/BANKSECURE-JAVA-SPRING-TSX.git",
+          demo: null,
+          status: "academic",
+          gradient: "from-indigo-500 to-blue-500"
         }
       ];
       setProjects(defaultProjects);
       localStorage.setItem('portfolio_projects', JSON.stringify(defaultProjects));
     }
+  }, []);
+
+  useEffect(() => {
+    // Vérifier si l'utilisateur est déjà authentifié
+    const authSession = localStorage.getItem('admin_auth_session');
+    if (authSession === 'authenticated') {
+      setIsAuthenticated(true);
+      loadProjects();
+    }
+  }, [loadProjects]);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    setError('');
+
+    if (password === ADMIN_PASSWORD) {
+      setIsAuthenticated(true);
+      localStorage.setItem('admin_auth_session', 'authenticated');
+      loadProjects();
+    } else {
+      setError('Mot de passe incorrect');
+      setPassword('');
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem('admin_auth_session');
+    setPassword('');
   };
 
   const saveProjects = (updatedProjects) => {
     localStorage.setItem('portfolio_projects', JSON.stringify(updatedProjects));
     setProjects(updatedProjects);
+    // Déclencher un événement pour mettre à jour Project.jsx
+    window.dispatchEvent(new Event('projectsUpdated'));
   };
 
   const handleAddProject = (projectData) => {
@@ -129,64 +169,8 @@ const Admin = () => {
     saveProjects(updatedProjects);
   };
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    fetchAllComments();
-  };
 
-  const handleApprove = async (id) => {
-    try {
-      const response = await fetch(`${API_URL}/admin/comments/${id}/approve`, {
-        method: 'PATCH',
-        headers: {
-          'x-admin-secret': adminSecret
-        }
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setComments(comments.map(c =>
-          c._id === id ? { ...c, isApproved: true } : c
-        ));
-      } else {
-        alert('Erreur lors de l\'approbation');
-      }
-    } catch (err) {
-      console.error('Error approving comment:', err);
-      alert('Erreur de connexion');
-    }
-  };
-
-  const handleDelete = async (id) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')) {
-      return;
-    }
-
-    try {
-      const response = await fetch(`${API_URL}/admin/comments/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'x-admin-secret': adminSecret
-        }
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setComments(comments.filter(c => c._id !== id));
-      } else {
-        alert('Erreur lors de la suppression');
-      }
-    } catch (err) {
-      console.error('Error deleting comment:', err);
-      alert('Erreur de connexion');
-    }
-  };
-
-  const pendingComments = comments.filter(c => !c.isApproved);
-  const approvedComments = comments.filter(c => c.isApproved);
-
+  // Écran de connexion
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center px-4">
@@ -203,28 +187,37 @@ const Admin = () => {
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label htmlFor="adminSecret" className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                Clé secrète admin
+              <label htmlFor="password" className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                Mot de passe
               </label>
               <input
                 type="password"
-                id="adminSecret"
-                value={adminSecret}
-                onChange={(e) => setAdminSecret(e.target.value)}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                placeholder="Entrez la clé secrète"
+                placeholder="Entrez le mot de passe"
+                autoFocus
               />
             </div>
 
             <button
               type="submit"
-              disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors disabled:opacity-50"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
             >
-              {loading ? 'Connexion...' : 'Se connecter'}
+              Se connecter
             </button>
           </form>
+
+          <div className="mt-6 text-center">
+            <Link
+              to="/"
+              className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+            >
+              ← Retour à l'accueil
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -242,225 +235,58 @@ const Admin = () => {
               <FaHome /> Retour
             </Link>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Administration
+              Administration - Projets
             </h1>
           </div>
           <button
-            onClick={() => setIsAuthenticated(false)}
+            onClick={handleLogout}
             className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
           >
             Déconnexion
           </button>
         </div>
 
-        <div className="flex gap-4 mb-8">
+        <div className="mb-8">
           <button
-            onClick={() => setActiveTab('comments')}
-            className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-              activeTab === 'comments'
-                ? 'bg-blue-600 text-white'
-                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-            }`}
+            onClick={() => {
+              setEditingProject(null);
+              setShowProjectForm(true);
+            }}
+            className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2"
           >
-            Commentaires
-          </button>
-          <button
-            onClick={() => setActiveTab('projects')}
-            className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-              activeTab === 'projects'
-                ? 'bg-blue-600 text-white'
-                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-            }`}
-          >
-            Projets
+            <FaPlus /> Ajouter un projet
           </button>
         </div>
 
-        {activeTab === 'comments' && (
-          <div className="grid gap-6 mb-8">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <p className="text-3xl font-bold text-blue-600">{comments.length}</p>
-                  <p className="text-gray-600 dark:text-gray-400">Total</p>
-                </div>
-                <div>
-                  <p className="text-3xl font-bold text-yellow-600">{pendingComments.length}</p>
-                  <p className="text-gray-600 dark:text-gray-400">En attente</p>
-                </div>
-                <div>
-                  <p className="text-3xl font-bold text-green-600">{approvedComments.length}</p>
-                  <p className="text-gray-600 dark:text-gray-400">Approuvés</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'projects' && (
-          <div className="mb-8">
-            <button
-              onClick={() => {
-                setEditingProject(null);
-                setShowProjectForm(true);
-              }}
-              className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2"
-            >
-              <FaPlus /> Ajouter un projet
-            </button>
-          </div>
-        )}
-
-        {activeTab === 'comments' && loading ? (
-          <div className="text-center py-8">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          </div>
-        ) : activeTab === 'comments' ? (
-          <>
-            {pendingComments.length > 0 && (
-              <div className="mb-8">
-                <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
-                  Commentaires en attente ({pendingComments.length})
-                </h2>
-                <div className="space-y-4">
-                  {pendingComments.map((comment) => (
-                    <CommentAdminCard
-                      key={comment._id}
-                      comment={comment}
-                      onApprove={handleApprove}
-                      onDelete={handleDelete}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {approvedComments.length > 0 && (
-              <div>
-                <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
-                  Commentaires approuvés ({approvedComments.length})
-                </h2>
-                <div className="space-y-4">
-                  {approvedComments.map((comment) => (
-                    <CommentAdminCard
-                      key={comment._id}
-                      comment={comment}
-                      onDelete={handleDelete}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {comments.length === 0 && (
-              <div className="text-center py-8 text-gray-600 dark:text-gray-400">
-                Aucun commentaire
-              </div>
-            )}
-          </>
-        ) : activeTab === 'projects' ? (
-          <>
-            {showProjectForm ? (
-              <ProjectForm
-                project={editingProject}
-                onSave={editingProject ? handleUpdateProject : handleAddProject}
-                onCancel={() => {
-                  setShowProjectForm(false);
-                  setEditingProject(null);
+        {showProjectForm ? (
+          <ProjectForm
+            project={editingProject}
+            onSave={editingProject ? handleUpdateProject : handleAddProject}
+            onCancel={() => {
+              setShowProjectForm(false);
+              setEditingProject(null);
+            }}
+          />
+        ) : (
+          <div className="grid gap-4">
+            {projects.map((project) => (
+              <ProjectCard
+                key={project.id}
+                project={project}
+                onEdit={(project) => {
+                  setEditingProject(project);
+                  setShowProjectForm(true);
                 }}
-              />
-            ) : (
-              <div className="grid gap-4">
-                {projects.map((project) => (
-                  <ProjectCard
-                    key={project.id}
-                    project={project}
-                    onEdit={(project) => {
-                      setEditingProject(project);
-                      setShowProjectForm(true);
-                    }}
-                    onDelete={handleDeleteProject}
-                  />
-                ))}
-                {projects.length === 0 && (
-                  <div className="text-center py-8 text-gray-600 dark:text-gray-400">
-                    Aucun projet
-                  </div>
-                )}
-              </div>
-            )}
-          </>
-        ) : null}
-      </div>
-    </div>
-  );
-};
-
-const CommentAdminCard = ({ comment, onApprove, onDelete }) => {
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-    return new Date(dateString).toLocaleDateString('fr-FR', options);
-  };
-
-  return (
-    <div className={`bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 ${!comment.isApproved ? 'border-l-4 border-yellow-500' : ''}`}>
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex-1">
-          <div className="flex items-center gap-3 mb-2">
-            <h4 className="font-semibold text-lg text-gray-900 dark:text-white">
-              {comment.name}
-            </h4>
-            {comment.isApproved ? (
-              <span className="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200 text-xs rounded-full flex items-center gap-1">
-                <FaEye /> Visible
-              </span>
-            ) : (
-              <span className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-200 text-xs rounded-full">
-                En attente
-              </span>
-            )}
-          </div>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            {comment.email}
-          </p>
-          <p className="text-xs text-gray-500 dark:text-gray-500">
-            {formatDate(comment.createdAt)}
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="flex">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <FaStar
-                key={star}
-                className={`text-lg ${
-                  star <= comment.rating ? 'text-yellow-400' : 'text-gray-300'
-                }`}
+                onDelete={handleDeleteProject}
               />
             ))}
+            {projects.length === 0 && (
+              <div className="text-center py-8 text-gray-600 dark:text-gray-400">
+                Aucun projet
+              </div>
+            )}
           </div>
-        </div>
-      </div>
-
-      <p className="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
-        {comment.comment}
-      </p>
-
-      <div className="flex gap-2">
-        {!comment.isApproved && onApprove && (
-          <button
-            onClick={() => onApprove(comment._id)}
-            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2"
-          >
-            <FaCheck /> Approuver
-          </button>
         )}
-        <button
-          onClick={() => onDelete(comment._id)}
-          className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors flex items-center gap-2"
-        >
-          <FaTrash /> Supprimer
-        </button>
       </div>
     </div>
   );

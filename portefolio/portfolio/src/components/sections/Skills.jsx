@@ -7,6 +7,7 @@ import {
   FaNodeJs,
   FaPython,
   FaReact,
+  FaJenkins,
 } from "react-icons/fa";
 import {
   SiDotnet,
@@ -15,6 +16,9 @@ import {
   SiMysql,
   SiSpring,
   SiTailwindcss,
+  SiKubernetes,
+  SiTerraform,
+  SiPostgresql,
 } from "react-icons/si";
 import { TbBrandCSharp } from "react-icons/tb";
 import { useTheme } from "../../context/themecontext";
@@ -41,9 +45,13 @@ function Skills() {
     { name: "C#", icon: TbBrandCSharp, color: "#239120" },
     { name: ".NET", icon: SiDotnet, color: "#512BD4" },
     { name: "MySQL", icon: SiMysql, color: "#4479A1" },
+    { name: "PostgreSQL", icon: SiPostgresql, color: "#4169E1" },
     { name: "MongoDB", icon: SiMongodb, color: "#47A248" },
     { name: "Git", icon: FaGitAlt, color: "#F05032" },
     { name: "Docker", icon: FaDocker, color: "#2496ED" },
+    { name: "Kubernetes", icon: SiKubernetes, color: "#326CE5" },
+    { name: "Jenkins", icon: FaJenkins, color: "#D24939" },
+    { name: "Terraform", icon: SiTerraform, color: "#7B42BC" },
   ];
 
   const softSkillsKeys = [

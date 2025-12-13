@@ -5,7 +5,6 @@ import Contact from "./components/sections/Contact";
 import Hero from "./components/sections/Hero";
 import Projects from "./components/sections/Project";
 import Skills from "./components/sections/Skills";
-import CommentsSection from "./components/sections/CommentsSection";
 import ScrollToTop from "./components/ui/ScrollToTop.jsx";
 
 // TODO: ajouter React Router pour navigation future ?
@@ -17,7 +16,6 @@ function App() {
       <About />
       <Skills />
       <Projects />
-      <CommentsSection />
       <Contact />
       <Footer />
       <ScrollToTop />

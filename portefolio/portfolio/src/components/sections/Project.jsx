@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../../context/themecontext";
 import { useScrollAnimation } from "../../hooks/UseScrollAnimation";
@@ -13,71 +13,140 @@ function Projects() {
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
-    const savedProjects = localStorage.getItem('portfolio_projects');
-    if (savedProjects) {
-      setProjects(JSON.parse(savedProjects));
-    } else {
-      const defaultProjects = [
-    {
-      id: 1,
-      title: "Indeed Be Like",
-      description:
-        "Clone d'Indeed - Plateforme de recherche d'emploi avec système de candidatures et gestion des offres. Interface moderne et responsive.",
-      technologies: ["React", "Node.js", "JavaScript", "Tailwind"],
-      github: "https://github.com/Meta-tomm/Site.git",
-      demo: null,
-      status: "inProgress",
-      gradient: "from-blue-500 to-cyan-500",
-      hasGallery: true,
-      screenshots: [
-        {
-          url: "/projects/indeed-screenshots/home.png",
-          alt: "Dashboard Client Indeed Be Like",
-          caption: "Dashboard client - Gestion des candidatures et profil",
-        },
-        {
-          url: "/projects/indeed-screenshots/search.png",
-          alt: "Interface de Swipe",
-          caption: "Système de swipe pour parcourir les offres d'emploi",
-        },
-        {
-          url: "/projects/indeed-screenshots/job-detail.png",
-          alt: "Dashboard Entreprise",
-          caption: "Dashboard entreprise - Gestion des offres et candidatures",
-        },
-        {
-          url: "/projects/indeed-screenshots/application.png",
-          alt: "Système de messagerie",
-          caption: "Interface de messagerie entre candidats et entreprises",
-        },
-      ],
-    },
-    {
-      id: 2,
-      title: "Portfolio Professionnel",
-      description:
-        "Portfolio personnel moderne avec animations fluides, construit avec React et Tailwind CSS. Design minimaliste et performant.",
-      technologies: ["React", "Tailwind CSS", "Framer Motion"],
-      github: "https://github.com/Meta-tomm/portfolio",
-      demo: null,
-      status: "inProgress",
-      gradient: "from-purple-500 to-pink-500",
-    },
-    {
-      id: 3,
-      title: "Système de Gestion Hospitalière",
-      description:
-        "Projet académique - Application de gestion de données médicales respectant les normes FHIR/HL7 et RGPD.",
-      technologies: ["C#", ".NET", "MySQL", "FHIR/HL7"],
-      github: null,
-      demo: null,
-      status: "academic",
-      gradient: "from-green-500 to-emerald-500",
-    },
-  ];
-      setProjects(defaultProjects);
-      localStorage.setItem('portfolio_projects', JSON.stringify(defaultProjects));
-    }
+    const loadProjects = () => {
+      const savedProjects = localStorage.getItem('portfolio_projects');
+      if (savedProjects) {
+        let projects = JSON.parse(savedProjects);
+
+        // Vérifier si BankSecure existe, sinon l'ajouter
+        const bankSecureExists = projects.some(p =>
+          p.github === "https://github.com/Meta-tomm/BANKSECURE-JAVA-SPRING-TSX.git" ||
+          p.title?.includes("BankSecure") ||
+          p.title?.includes("BankFlow")
+        );
+
+        if (!bankSecureExists) {
+          const bankSecureProject = {
+            id: 5,
+            title: "BankSecure - Système Bancaire",
+            description:
+              "API REST sécurisée pour gestion de transactions bancaires avec authentification JWT et système de micro-services. Gestion des comptes, virements, historique des transactions avec traçabilité complète et respect des normes de sécurité bancaire.",
+            technologies: ["Java", "Spring Boot", "PostgreSQL", "JWT"],
+            github: "https://github.com/Meta-tomm/BANKSECURE-JAVA-SPRING-TSX.git",
+            demo: null,
+            status: "academic",
+            gradient: "from-indigo-500 to-blue-500",
+          };
+          projects.push(bankSecureProject);
+          localStorage.setItem('portfolio_projects', JSON.stringify(projects));
+        }
+
+        setProjects(projects);
+      } else {
+        // Projets par défaut si aucun n'est sauvegardé
+        const defaultProjects = [
+          {
+            id: 1,
+            title: "Recrute AI",
+            description:
+              "Recrut AI - Plateforme de recherche d'emploi avec système de candidatures et gestion des offres. Interface moderne et responsive.",
+            technologies: ["React", "Node.js", "JavaScript", "Tailwind"],
+            github: "https://github.com/Meta-tomm/Site.git",
+            demo: null,
+            status: "inProgress",
+            gradient: "from-blue-500 to-cyan-500",
+            hasGallery: true,
+            screenshots: [
+              {
+                url: "/projects/indeed-screenshots/home.png",
+                alt: "Dashboard Client Indeed Be Like",
+                caption: "Dashboard client - Gestion des candidatures et profil",
+              },
+              {
+                url: "/projects/indeed-screenshots/search.png",
+                alt: "Interface de Swipe",
+                caption: "Système de swipe pour parcourir les offres d'emploi",
+              },
+              {
+                url: "/projects/indeed-screenshots/job-detail.png",
+                alt: "Dashboard Entreprise",
+                caption: "Dashboard entreprise - Gestion des offres et candidatures",
+              },
+              {
+                url: "/projects/indeed-screenshots/application.png",
+                alt: "Système de messagerie",
+                caption: "Interface de messagerie entre candidats et entreprises",
+              },
+            ],
+          },
+          {
+            id: 2,
+            title: "Portfolio Professionnel",
+            description:
+              "Portfolio personnel moderne avec animations fluides, construit avec React et Tailwind CSS. Design minimaliste et performant.",
+            technologies: ["React", "Tailwind CSS", "Framer Motion"],
+            github: "https://github.com/Meta-tomm/portfolio",
+            demo: null,
+            status: "inProgress",
+            gradient: "from-purple-500 to-pink-500",
+          },
+          {
+            id: 3,
+            title: "MediTrack .NET - Système de Gestion Hospitalier",
+            description:
+              "Développement d'une API de gestion des dossiers patients avec implémentation stricte de la confidentialité des données via Identity. Optimisation des requêtes SQL avec Entity Framework pour traiter de gros volumes de données.",
+            technologies: ["C#", "ASP.NET Core 8", "Entity Framework", "SQL Server"],
+            github: "https://github.com/Meta-tomm/MEDITRACK.git",
+            demo: null,
+            status: "academic",
+            gradient: "from-green-500 to-emerald-500",
+          },
+          {
+            id: 4,
+            title: "DataFin Predictor - Analyse de Données",
+            description:
+              "Script d'automatisation pour l'analyse de flux de trésorerie. Utilisation de techniques de machine learning pour prédire les tendances financières et optimiser la gestion budgétaire.",
+            technologies: ["Python", "Pandas", "Scikit-learn"],
+            github: null,
+            demo: null,
+            status: "academic",
+            gradient: "from-orange-500 to-red-500",
+          },
+          {
+            id: 5,
+            title: "BankSecure - Système Bancaire",
+            description:
+              "API REST sécurisée pour gestion de transactions bancaires avec authentification JWT et système de micro-services. Gestion des comptes, virements, historique des transactions avec traçabilité complète et respect des normes de sécurité bancaire.",
+            technologies: ["Java", "Spring Boot", "PostgreSQL", "JWT"],
+            github: "https://github.com/Meta-tomm/BANKSECURE-JAVA-SPRING-TSX.git",
+            demo: null,
+            status: "academic",
+            gradient: "from-indigo-500 to-blue-500",
+          },
+        ];
+        setProjects(defaultProjects);
+        localStorage.setItem('portfolio_projects', JSON.stringify(defaultProjects));
+      }
+    };
+
+    loadProjects();
+
+    // Écouter les changements dans localStorage (pour synchroniser avec l'admin)
+    const handleStorageChange = (e) => {
+      if (e.key === 'portfolio_projects') {
+        loadProjects();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    // Écouter les événements personnalisés pour les changements dans le même onglet
+    window.addEventListener('projectsUpdated', loadProjects);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('projectsUpdated', loadProjects);
+    };
   }, []);
 
   return (
