@@ -1,13 +1,13 @@
 import { StrictMode, lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import App from "./App.jsx";
-import { ThemeProvider } from "./context/themecontext.jsx";
+import App from "./App.tsx";
+import { ThemeProvider } from "./context/themecontext.tsx";
 import "./i18n";
 import "./index.css";
 
 // Lazy load Admin page to reduce initial bundle size
-const Admin = lazy(() => import("./pages/Admin.jsx"));
+const Admin = lazy(() => import("./pages/Admin.tsx"));
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
