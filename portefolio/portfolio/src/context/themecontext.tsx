@@ -1,10 +1,20 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 
-const ThemeContext = createContext();
+interface ThemeContextType {
+  isDark: boolean;
+  toggleTheme: () => void;
+}
 
-export function ThemeProvider({ children }) {
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+interface ThemeProviderProps {
+  children: ReactNode;
+}
+
+export function ThemeProvider({ children }: ThemeProviderProps) {
   const [isDark, setIsDark] = useState(true);
 
+  // Load saved theme from localStorage on mount
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) {
@@ -12,6 +22,7 @@ export function ThemeProvider({ children }) {
     }
   }, []);
 
+  // Setup CSS transition variables for smooth theme switching
   useEffect(() => {
     document.documentElement.style.setProperty(
       '--theme-transition',
@@ -19,6 +30,7 @@ export function ThemeProvider({ children }) {
     );
   }, []);
 
+  // Apply dark class to documentElement when theme changes
   useEffect(() => {
     if (isDark) {
       document.documentElement.classList.add('dark');
@@ -33,6 +45,7 @@ export function ThemeProvider({ children }) {
     setIsDark(!isDark);
     localStorage.setItem("theme", !isDark ? "dark" : "light");
 
+    // Remove transitioning class after animation completes
     setTimeout(() => {
       document.documentElement.classList.remove('theme-transitioning');
     }, 300);
@@ -45,6 +58,10 @@ export function ThemeProvider({ children }) {
   );
 }
 
-export function useTheme() {
-  return useContext(ThemeContext);
+export function useTheme(): ThemeContextType {
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error("useTheme must be used within a ThemeProvider");
+  }
+  return context;
 }

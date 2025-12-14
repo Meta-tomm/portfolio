@@ -1,12 +1,25 @@
 import { useEffect, useState } from "react";
-import { useTheme } from "../../context/themecontext";
+import { useTheme } from "@context/themecontext";
 
-function ImageGalleryModal({ isOpen, onClose, images, projectTitle }) {
+interface Screenshot {
+  url: string;
+  alt: string;
+  caption?: string;
+}
+
+interface ImageGalleryModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  images: Screenshot[];
+  projectTitle: string;
+}
+
+function ImageGalleryModal({ isOpen, onClose, images, projectTitle }: ImageGalleryModalProps) {
   const { isDark } = useTheme();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
-    const handleEscape = (e) => {
+    const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
 
@@ -36,6 +49,9 @@ function ImageGalleryModal({ isOpen, onClose, images, projectTitle }) {
   }, [isOpen]);
 
   if (!isOpen) return null;
+
+  const currentImage = images[currentImageIndex];
+  if (!currentImage) return null;
 
   return (
     <div
@@ -73,6 +89,7 @@ function ImageGalleryModal({ isOpen, onClose, images, projectTitle }) {
                 ? "hover:bg-gray-800 text-gray-400 hover:text-white"
                 : "hover:bg-gray-100 text-gray-600 hover:text-gray-900"
             }`}
+            aria-label="Close gallery"
           >
             <svg
               className="w-6 h-6"
@@ -93,19 +110,19 @@ function ImageGalleryModal({ isOpen, onClose, images, projectTitle }) {
         <div className="relative p-8">
           <div className="flex items-center justify-center">
             <img
-              src={images[currentImageIndex].url}
-              alt={images[currentImageIndex].alt}
+              src={currentImage.url}
+              alt={currentImage.alt}
               className="max-h-[60vh] w-auto rounded-lg shadow-lg object-contain"
             />
           </div>
 
-          {images[currentImageIndex].caption && (
+          {currentImage.caption && (
             <p
               className={`text-center mt-4 text-sm ${
                 isDark ? "text-gray-400" : "text-gray-600"
               }`}
             >
-              {images[currentImageIndex].caption}
+              {currentImage.caption}
             </p>
           )}
 
@@ -118,6 +135,7 @@ function ImageGalleryModal({ isOpen, onClose, images, projectTitle }) {
                     ? "bg-gray-800 hover:bg-gray-700 text-white"
                     : "bg-white hover:bg-gray-100 text-gray-900 shadow-lg"
                 }`}
+                aria-label="Previous image"
               >
                 <svg
                   className="w-6 h-6"
@@ -141,6 +159,7 @@ function ImageGalleryModal({ isOpen, onClose, images, projectTitle }) {
                     ? "bg-gray-800 hover:bg-gray-700 text-white"
                     : "bg-white hover:bg-gray-100 text-gray-900 shadow-lg"
                 }`}
+                aria-label="Next image"
               >
                 <svg
                   className="w-6 h-6"
@@ -175,6 +194,7 @@ function ImageGalleryModal({ isOpen, onClose, images, projectTitle }) {
                     ? "ring-2 ring-blue-500 scale-110"
                     : "opacity-60 hover:opacity-100"
                 }`}
+                aria-label={`View image ${index + 1}`}
               >
                 <img
                   src={image.url}

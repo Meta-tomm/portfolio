@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+// Scroll to top button component - shows when user scrolls down 300px
 function ScrollToTop() {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -29,6 +30,7 @@ function ScrollToTop() {
         <button
           onClick={scrollToTop}
           className="fixed bottom-8 right-8 z-50 p-4 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 hover:scale-110"
+          aria-label="Scroll to top"
         >
           <svg
             className="w-6 h-6"
