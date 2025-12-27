@@ -79,12 +79,12 @@ function Projects() {
           },
           {
             id: 4,
-            title: "DataAnalytics Dashboard - BI & Visualisation",
+            title: "DataFin Predictor - Dashboard Financier IA",
             description:
-              "Plateforme d'analyse de données avec ETL automatisé. Pipeline de traitement de données massives, création de tableaux de bord interactifs, calculs de KPIs métier et rapports automatisés pour aide à la décision.",
-            technologies: ["Python", "Pandas", "SQL", "Matplotlib"],
-            github: null,
-            demo: null,
+              "Dashboard financier intelligent simulant des pipelines data science (ETL: ingest, clean, analyze, deploy). Analyse de flux de trésorerie avec Gemini AI pour prévisions, détection d'anomalies et insights financiers. Visualisations interactives avec Recharts.",
+            technologies: ["React", "TypeScript", "Gemini AI", "Recharts"],
+            github: "https://github.com/Meta-tomm/DataFin",
+            demo: "https://ai.studio/apps/drive/1rxOySNc8Drvb0ecJ4Ptl_EW941BVnHkr",
             status: "academic",
             gradient: "from-orange-500 to-red-500",
           },

@@ -28,7 +28,10 @@ Document de présentation orale structuré pour expliquer l'architecture et les 
 
 **Projets mis à jour** :
 1. HealthHub - Plateforme de gestion médicale (PHP, Symfony, MySQL, Twig)
-2. DataAnalytics Dashboard - Plateforme BI avec ETL (Python, Pandas, SQL, Matplotlib)
+2. DataFin Predictor - Dashboard financier IA avec pipelines data science (React, TypeScript, Gemini AI, Recharts)
+   - Lien GitHub: https://github.com/Meta-tomm/DataFin
+   - Demo live: https://ai.studio/apps/drive/1rxOySNc8Drvb0ecJ4Ptl_EW941BVnHkr
+   - Fonctionnalités: Analyse flux trésorerie, prévisions IA, détection anomalies, visualisations interactives
 3. E-Commerce API - API REST Symfony (PHP, Symfony, PostgreSQL, Redis)
 
 **Impacts** :
