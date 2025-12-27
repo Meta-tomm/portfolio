@@ -3,24 +3,22 @@ import {
   FaDocker,
   FaGitAlt,
   FaHtml5,
-  FaJava,
   FaNodeJs,
   FaPython,
   FaReact,
-  FaJenkins,
+  FaPhp,
 } from "react-icons/fa";
 import {
-  SiDotnet,
   SiJavascript,
   SiMongodb,
   SiMysql,
-  SiSpring,
   SiTailwindcss,
-  SiKubernetes,
-  SiTerraform,
   SiPostgresql,
+  SiTypescript,
+  SiSymfony,
+  SiPandas,
+  SiScikitlearn,
 } from "react-icons/si";
-import { TbBrandCSharp } from "react-icons/tb";
 import { useTheme } from "../../context/themecontext";
 import { useScrollAnimation } from "../../hooks/UseScrollAnimation";
 import { CardBody, CardContainer, CardItem } from "../ui/3d-card";
@@ -33,25 +31,29 @@ function Skills() {
   const { t } = useTranslation();
 
   // Tech skills with icons and brand colors
+  // Organized by focus areas: Frontend, Backend, Data/BI, Databases, DevOps
   const skillsData = [
+    // Frontend
     { name: "React", icon: FaReact, color: "#61DAFB" },
+    { name: "TypeScript", icon: SiTypescript, color: "#3178C6" },
     { name: "JavaScript", icon: SiJavascript, color: "#F7DF1E" },
     { name: "HTML/CSS", icon: FaHtml5, color: "#E34F26" },
     { name: "Tailwind", icon: SiTailwindcss, color: "#06B6D4" },
+    // Backend
+    { name: "PHP", icon: FaPhp, color: "#777BB4" },
+    { name: "Symfony", icon: SiSymfony, color: "#000000" },
     { name: "Node.js", icon: FaNodeJs, color: "#339933" },
+    // Data & Analytics
     { name: "Python", icon: FaPython, color: "#3776AB" },
-    { name: "Java", icon: FaJava, color: "#007396" },
-    { name: "Spring Boot", icon: SiSpring, color: "#6DB33F" },
-    { name: "C#", icon: TbBrandCSharp, color: "#239120" },
-    { name: ".NET", icon: SiDotnet, color: "#512BD4" },
-    { name: "MySQL", icon: SiMysql, color: "#4479A1" },
+    { name: "Pandas", icon: SiPandas, color: "#150458" },
+    { name: "Scikit-learn", icon: SiScikitlearn, color: "#F7931E" },
+    // Databases
     { name: "PostgreSQL", icon: SiPostgresql, color: "#4169E1" },
+    { name: "MySQL", icon: SiMysql, color: "#4479A1" },
     { name: "MongoDB", icon: SiMongodb, color: "#47A248" },
-    { name: "Git", icon: FaGitAlt, color: "#F05032" },
+    // DevOps & Tools
     { name: "Docker", icon: FaDocker, color: "#2496ED" },
-    { name: "Kubernetes", icon: SiKubernetes, color: "#326CE5" },
-    { name: "Jenkins", icon: FaJenkins, color: "#D24939" },
-    { name: "Terraform", icon: SiTerraform, color: "#7B42BC" },
+    { name: "Git", icon: FaGitAlt, color: "#F05032" },
   ];
 
   const softSkillsKeys = [

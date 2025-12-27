@@ -9,15 +9,15 @@
   },
   "hero": {
     "greeting": "Hello, I'm",
-    "title": "Junior Full Stack Developer",
-    "description": "Full stack Development and Data Analyst student at Epitech",
+    "title": "PHP Symfony Developer & Analytics Engineer",
+    "description": "Student specialized in PHP/React web development and data analytics at Epitech",
     "viewProjects": "View my projects",
     "contactMe": "Contact me"
   },
   "about": {
     "title": "About Me",
-    "intro": "Student in Master of Science in Digital Technology at Epitech Lyon, I'm passionate about Fullstack development and data science.",
-    "desc": "With a dual expertise in development and management, I'm looking to contribute to innovative projects especially in the field of digital health but i'm steel open to other field.",
+    "intro": "Student in Master of Science in Digital Technology at Epitech Lyon, specialized in web development with PHP/Symfony/React and data analytics (BI/Analytics).",
+    "desc": "With expertise in backend development (PHP, Symfony), frontend (React, TypeScript) and data analytics (Python, SQL, BI), I'm actively looking for an internship to contribute to data-driven projects and apply my technical skills.",
     "location": "Location",
     "status": "Status",
     "statusValue": "Looking for internship",
@@ -76,7 +76,7 @@
     }
   },
   "footer": {
-    "description": "Junior Full Stack Developer passionate about creating modern web applications.",
+    "description": "PHP Symfony Developer & Analytics Engineer passionate about creating web applications and data analysis.",
     "navigation": "Navigation",
     "contact": "Contact"
   }

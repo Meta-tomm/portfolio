@@ -6,6 +6,38 @@ Document de présentation orale structuré pour expliquer l'architecture et les 
 
 ## Changelog technique
 
+### 2025-12-27 - Reorientation Profil: PHP Symfony & Analytics Engineer
+
+**Changements de positionnement professionnel** :
+- ✅ Refonte du profil pour spécialisation en développement PHP Symfony, React et Analytics Engineer
+- ✅ Mise à jour des compétences techniques (Skills.tsx)
+- ✅ Adaptation des projets pour refléter la nouvelle orientation
+- ✅ Traductions mises à jour (fr.json, en.json)
+
+**Technologies retirées** :
+- C# et .NET (ASP.NET Core, Entity Framework)
+- Java et Spring Boot
+- DevOps avancé (Kubernetes, Jenkins, Terraform)
+
+**Technologies ajoutées/mises en avant** :
+- Backend: PHP, Symfony
+- Frontend: React, TypeScript (déjà présent, mis en avant)
+- Data/BI: Python, Pandas, Scikit-learn
+- Databases: PostgreSQL, MySQL (focus SQL)
+- DevOps de base: Docker, Git
+
+**Projets mis à jour** :
+1. HealthHub - Plateforme de gestion médicale (PHP, Symfony, MySQL, Twig)
+2. DataAnalytics Dashboard - Plateforme BI avec ETL (Python, Pandas, SQL, Matplotlib)
+3. E-Commerce API - API REST Symfony (PHP, Symfony, PostgreSQL, Redis)
+
+**Impacts** :
+- Profil aligné avec recherche d'alternance en développement web PHP/React et Analytics
+- Stack technique cohérente: PHP backend, React frontend, Python/SQL pour data
+- Projets démontrant expertise en architecture web et analyse de données
+
+---
+
 ### 2025-12-14 - Frontend Upgrade & TypeScript Migration
 
 **Performance & Optimisations** :

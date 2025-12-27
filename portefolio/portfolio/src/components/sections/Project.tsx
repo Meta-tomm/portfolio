@@ -16,31 +16,7 @@ function Projects() {
     const loadProjects = () => {
       const savedProjects = localStorage.getItem('portfolio_projects');
       if (savedProjects) {
-        let projects = JSON.parse(savedProjects);
-
-        // Vérifier si BankSecure existe, sinon l'ajouter
-        const bankSecureExists = projects.some(p =>
-          p.github === "https://github.com/Meta-tomm/BANKSECURE-JAVA-SPRING-TSX.git" ||
-          p.title?.includes("BankSecure") ||
-          p.title?.includes("BankFlow")
-        );
-
-        if (!bankSecureExists) {
-          const bankSecureProject = {
-            id: 5,
-            title: "BankSecure - Système Bancaire",
-            description:
-              "API REST sécurisée pour gestion de transactions bancaires avec authentification JWT et système de micro-services. Gestion des comptes, virements, historique des transactions avec traçabilité complète et respect des normes de sécurité bancaire.",
-            technologies: ["Java", "Spring Boot", "PostgreSQL", "JWT"],
-            github: "https://github.com/Meta-tomm/BANKSECURE-JAVA-SPRING-TSX.git",
-            demo: null,
-            status: "academic",
-            gradient: "from-indigo-500 to-blue-500",
-          };
-          projects.push(bankSecureProject);
-          localStorage.setItem('portfolio_projects', JSON.stringify(projects));
-        }
-
+        const projects = JSON.parse(savedProjects);
         setProjects(projects);
       } else {
         // Projets par défaut si aucun n'est sauvegardé
@@ -92,21 +68,21 @@ function Projects() {
           },
           {
             id: 3,
-            title: "MediTrack .NET - Système de Gestion Hospitalier",
+            title: "HealthHub - Plateforme de Gestion Médicale",
             description:
-              "Développement d'une API de gestion des dossiers patients avec implémentation stricte de la confidentialité des données via Identity. Optimisation des requêtes SQL avec Entity Framework pour traiter de gros volumes de données.",
-            technologies: ["C#", "ASP.NET Core 8", "Entity Framework", "SQL Server"],
-            github: "https://github.com/Meta-tomm/MEDITRACK.git",
+              "Application web de gestion de rendez-vous médicaux avec authentification sécurisée. Architecture MVC avec Symfony, gestion des rôles (patients, médecins, admins), système de notifications et tableau de bord analytique.",
+            technologies: ["PHP", "Symfony", "MySQL", "Twig"],
+            github: null,
             demo: null,
             status: "academic",
             gradient: "from-green-500 to-emerald-500",
           },
           {
             id: 4,
-            title: "DataFin Predictor - Analyse de Données",
+            title: "DataAnalytics Dashboard - BI & Visualisation",
             description:
-              "Script d'automatisation pour l'analyse de flux de trésorerie. Utilisation de techniques de machine learning pour prédire les tendances financières et optimiser la gestion budgétaire.",
-            technologies: ["Python", "Pandas", "Scikit-learn"],
+              "Plateforme d'analyse de données avec ETL automatisé. Pipeline de traitement de données massives, création de tableaux de bord interactifs, calculs de KPIs métier et rapports automatisés pour aide à la décision.",
+            technologies: ["Python", "Pandas", "SQL", "Matplotlib"],
             github: null,
             demo: null,
             status: "academic",
@@ -114,11 +90,11 @@ function Projects() {
           },
           {
             id: 5,
-            title: "BankSecure - Système Bancaire",
+            title: "E-Commerce API - Symfony REST",
             description:
-              "API REST sécurisée pour gestion de transactions bancaires avec authentification JWT et système de micro-services. Gestion des comptes, virements, historique des transactions avec traçabilité complète et respect des normes de sécurité bancaire.",
-            technologies: ["Java", "Spring Boot", "PostgreSQL", "JWT"],
-            github: "https://github.com/Meta-tomm/BANKSECURE-JAVA-SPRING-TSX.git",
+              "API REST complète pour site e-commerce avec gestion des produits, commandes et paiements. Architecture hexagonale, tests unitaires, documentation OpenAPI, intégration Stripe et système de cache Redis pour optimisation.",
+            technologies: ["PHP", "Symfony", "PostgreSQL", "Redis"],
+            github: null,
             demo: null,
             status: "academic",
             gradient: "from-indigo-500 to-blue-500",

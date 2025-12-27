@@ -9,18 +9,18 @@
   },
   "hero": {
     "greeting": "Bonjour, je suis",
-    "title": "Développeur Full Stack Junior",
-    "description": "Étudiant en développement Fullstack et Data Analyst à Epitech",
+    "title": "Développeur PHP Symfony & Analytics Engineer",
+    "description": "Étudiant spécialisé en développement web PHP/React et analyse de données à Epitech",
     "viewProjects": "Voir mes projets",
     "contactMe": "Me contacter"
   },
   "about": {
     "title": "À propos de moi",
-    "intro": "Étudiant en Master of Science Numérique à Epitech Lyon, je suis passionné par le développement Fullstack et l'analyse de données.",
-    "desc": "Avec une double compétence en développement et en gestion, je recherche activement une alternance dans le secteur de la santé ou bancaire pour contribuer à des projets innovants tout en restant ouvert à d'autres opportunités.",
+    "intro": "Étudiant en Master of Science Numérique à Epitech Lyon, je suis spécialisé dans le développement web avec PHP/Symfony/React et l'analyse de données (BI/Analytics).",
+    "desc": "Avec une expertise en développement backend (PHP, Symfony), frontend (React, TypeScript) et en analyse de données (Python, SQL, BI), je recherche activement une alternance pour contribuer à des projets data-driven et mettre en pratique mes compétences techniques.",
     "location": "Localisation",
     "status": "Statut",
-    "statusValue": "En alternance",
+    "statusValue": "Recherche alternance",
     "email": "Email",
     "phone": "Téléphone",
     "downloadCV": "Télécharger mon CV"
@@ -76,7 +76,7 @@
     }
   },
   "footer": {
-    "description": "Développeur Full Stack Junior passionné par la création d'applications web modernes.",
+    "description": "Développeur PHP Symfony & Analytics Engineer passionné par la création d'applications web et l'analyse de données.",
     "navigation": "Navigation",
     "contact": "Contact"
   }
