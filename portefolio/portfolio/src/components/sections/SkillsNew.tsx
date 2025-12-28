@@ -202,37 +202,6 @@ function SkillsNew() {
                   </CardContainer>
                 ))}
               </div>
-
-              {/* Soft Skills */}
-              <div
-                className={`p-8 rounded-2xl backdrop-blur-sm border ${
-                  isDark
-                    ? "bg-white/5 border-white/10"
-                    : "bg-white shadow-lg border-gray-100"
-                }`}
-              >
-                <h3
-                  className={`text-2xl font-bold mb-6 text-center ${
-                    isDark ? "text-white" : "text-gray-900"
-                  }`}
-                >
-                  {t("skills.softSkills")}
-                </h3>
-                <div className="flex flex-wrap gap-3 justify-center">
-                  {softSkillsKeys.map((key) => (
-                    <span
-                      key={key}
-                      className={`px-5 py-2 rounded-full border-2 font-medium transition-all hover:scale-105 hover:shadow-lg ${
-                        isDark
-                          ? "border-blue-600 bg-blue-600/10 text-blue-400 hover:bg-blue-600/20"
-                          : "border-blue-600 bg-blue-50 text-blue-600 hover:bg-blue-100"
-                      }`}
-                    >
-                      {t(`skills.${key}`)}
-                    </span>
-                  ))}
-                </div>
-              </div>
             </div>
           )}
 

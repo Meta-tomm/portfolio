@@ -39,64 +39,49 @@ export default function Analytics() {
   // Fetch all data on mount
   useEffect(() => {
     const fetchAllData = async () => {
-      setLoading(true);
+      // Set fallback data immediately
+      setQuote({
+        content: "The only way to do great work is to love what you do.",
+        author: "Steve Jobs"
+      });
+      setFact({
+        text: "The world's oldest known living tree is over 5,000 years old and is located in California."
+      });
 
-      // Fetch quote - using ZenQuotes API (more reliable)
+      // Stop loading after 2 seconds max
+      const timeout = setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+
       try {
-        const quoteRes = await fetch('https://zenquotes.io/api/random');
-        const quoteArr = await quoteRes.json();
-        if (quoteArr && quoteArr[0]) {
-          setQuote({ content: quoteArr[0].q, author: quoteArr[0].a });
+        // Try to fetch quote
+        try {
+          const quoteRes = await fetch('https://zenquotes.io/api/random', { signal: AbortSignal.timeout(3000) });
+          const quoteArr = await quoteRes.json();
+          if (quoteArr && quoteArr[0]) {
+            setQuote({ content: quoteArr[0].q, author: quoteArr[0].a });
+          }
+        } catch (err) {
+          console.log('Quote API failed, using fallback');
         }
-      } catch (error) {
-        console.error('Failed to fetch quote:', error);
-        // Fallback quote
-        setQuote({
-          content: "The only way to do great work is to love what you do.",
-          author: "Steve Jobs"
-        });
-      }
 
-      // Fetch NASA - using fallback data if fails
-      try {
-        const nasaRes = await fetch('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY');
-        if (nasaRes.ok) {
-          const nasaData = await nasaRes.json();
-          setNasa(nasaData);
+        // Try to fetch crypto
+        try {
+          const cryptoRes = await fetch(
+            'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true',
+            { signal: AbortSignal.timeout(3000) }
+          );
+          if (cryptoRes.ok) {
+            const cryptoData = await cryptoRes.json();
+            setCrypto(cryptoData);
+          }
+        } catch (err) {
+          console.log('Crypto API failed');
         }
-      } catch (error) {
-        console.error('Failed to fetch NASA data:', error);
+      } finally {
+        clearTimeout(timeout);
+        setLoading(false);
       }
-
-      // Fetch crypto prices
-      try {
-        const cryptoRes = await fetch(
-          'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true'
-        );
-        const cryptoData = await cryptoRes.json();
-        setCrypto(cryptoData);
-      } catch (error) {
-        console.error('Failed to fetch crypto data:', error);
-      }
-
-      // Fetch random fact - using API Ninjas
-      try {
-        const factRes = await fetch('https://api.api-ninjas.com/v1/facts', {
-          headers: { 'X-Api-Key': 'DEMO' }
-        });
-        const factArr = await factRes.json();
-        if (factArr && factArr[0]) {
-          setFact({ text: factArr[0].fact });
-        }
-      } catch (error) {
-        console.error('Failed to fetch fact:', error);
-        // Fallback fact
-        setFact({
-          text: "The world's oldest known living tree is over 5,000 years old and is located in California."
-        });
-      }
-
-      setLoading(false);
     };
 
     fetchAllData();
