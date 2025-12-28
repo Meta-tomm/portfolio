@@ -3,41 +3,54 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "../../context/themecontext";
 import { useScrollAnimation } from "../../hooks/UseScrollAnimation";
 import { ProjectCard } from "../ui/ProjectCard";
-import { getAllProjects } from "../../data";
 
-// Projects section with data-driven project cards
-// Combines projects-data.ts (with detail pages) and localStorage projects
+// Projects section with data from backend API
 function ProjectsNew() {
   const [ref, isVisible] = useScrollAnimation();
   const { isDark } = useTheme();
   const { t } = useTranslation();
   const [projects, setProjects] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadProjects = () => {
-      const allProjects = getAllProjects();
-      setProjects(allProjects);
+    const loadProjects = async () => {
+      try {
+        setLoading(true);
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+        const response = await fetch(`${apiUrl}/projects`);
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.data) {
+            setProjects(data.data.map((p: any) => ({
+              id: p._id,
+              title: p.title,
+              description: p.description,
+              technologies: p.tags,
+              github: p.github,
+              demo: p.demo,
+              status: p.status,
+              gradient: p.gradient
+            })));
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load projects:', error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadProjects();
 
-    // Listen for storage changes (sync with admin page)
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "portfolio_projects") {
-        loadProjects();
-      }
-    };
-
-    // Listen for custom events (same-tab updates)
+    // Listen for custom events (project updates)
     const handleProjectsUpdated = () => {
       loadProjects();
     };
 
-    window.addEventListener("storage", handleStorageChange);
     window.addEventListener("projectsUpdated", handleProjectsUpdated);
 
     return () => {
-      window.removeEventListener("storage", handleStorageChange);
       window.removeEventListener("projectsUpdated", handleProjectsUpdated);
     };
   }, []);
@@ -107,8 +120,20 @@ function ProjectsNew() {
           ))}
         </div>
 
+        {/* Loading state */}
+        {loading && (
+          <div className="text-center py-16">
+            <div className={`w-16 h-16 border-4 rounded-full animate-spin mx-auto mb-4 ${
+              isDark ? "border-gray-700 border-t-blue-500" : "border-gray-200 border-t-blue-600"
+            }`} />
+            <p className={isDark ? "text-gray-400" : "text-gray-600"}>
+              Loading projects...
+            </p>
+          </div>
+        )}
+
         {/* Empty state */}
-        {projects.length === 0 && (
+        {!loading && projects.length === 0 && (
           <div className="text-center py-16">
             <p className={isDark ? "text-gray-400" : "text-gray-600"}>
               No projects available yet.

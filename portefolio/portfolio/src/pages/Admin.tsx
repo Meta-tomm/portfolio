@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { FaHome, FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
-// Mot de passe admin - vous pouvez le changer ici ou utiliser une variable d'environnement
+// Admin password - can be changed via environment variable
 const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'hello?123';
 
 const Admin = () => {
@@ -11,118 +11,70 @@ const Admin = () => {
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
+  const [adminSecret, setAdminSecret] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const loadProjects = useCallback(() => {
-    const savedProjects = localStorage.getItem('portfolio_projects');
-    if (savedProjects) {
-      let projects = JSON.parse(savedProjects);
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-      // Vérifier si BankSecure existe, sinon l'ajouter
-      const bankSecureExists = projects.some(p =>
-        p.github === "https://github.com/Meta-tomm/BANKSECURE-JAVA-SPRING-TSX.git" ||
-        p.title?.includes("BankSecure") ||
-        p.title?.includes("BankFlow")
-      );
+  const loadProjects = useCallback(async () => {
+    if (!adminSecret) return;
 
-      if (!bankSecureExists) {
-        const bankSecureProject = {
-          id: 5,
-          title: "BankSecure - Système Bancaire",
-          description: "API REST sécurisée pour gestion de transactions bancaires avec authentification JWT et système de micro-services. Gestion des comptes, virements, historique des transactions avec traçabilité complète et respect des normes de sécurité bancaire.",
-          technologies: ["Java", "Spring Boot", "PostgreSQL", "JWT"],
-          github: "https://github.com/Meta-tomm/BANKSECURE-JAVA-SPRING-TSX.git",
-          demo: null,
-          status: "academic",
-          gradient: "from-indigo-500 to-blue-500"
-        };
-        projects.push(bankSecureProject);
-        localStorage.setItem('portfolio_projects', JSON.stringify(projects));
-      }
-
-      setProjects(projects);
-    } else {
-      const defaultProjects = [
-        {
-          id: 1,
-          title: "Recrute AI",
-          description: "Recrut AI - Plateforme de recherche d'emploi avec système de candidatures et gestion des offres. Interface moderne et responsive.",
-          technologies: ["React", "Node.js", "JavaScript", "Tailwind"],
-          github: "https://github.com/Meta-tomm/Site.git",
-          demo: null,
-          status: "inProgress",
-          gradient: "from-blue-500 to-cyan-500",
-          hasGallery: true,
-          screenshots: [
-            { url: "/projects/indeed-screenshots/home.png", alt: "Dashboard Client Indeed Be Like", caption: "Dashboard client - Gestion des candidatures et profil" },
-            { url: "/projects/indeed-screenshots/search.png", alt: "Interface de Swipe", caption: "Système de swipe pour parcourir les offres d'emploi" },
-            { url: "/projects/indeed-screenshots/job-detail.png", alt: "Dashboard Entreprise", caption: "Dashboard entreprise - Gestion des offres et candidatures" },
-            { url: "/projects/indeed-screenshots/application.png", alt: "Système de messagerie", caption: "Interface de messagerie entre candidats et entreprises" }
-          ]
-        },
-        {
-          id: 2,
-          title: "Portfolio Professionnel",
-          description: "Portfolio personnel moderne avec animations fluides, construit avec React et Tailwind CSS. Design minimaliste et performant.",
-          technologies: ["React", "Tailwind CSS", "Framer Motion"],
-          github: "https://github.com/Meta-tomm/portfolio",
-          demo: null,
-          status: "inProgress",
-          gradient: "from-purple-500 to-pink-500"
-        },
-        {
-          id: 3,
-          title: "MediTrack .NET - Système de Gestion Hospitalier",
-          description: "Développement d'une API de gestion des dossiers patients avec implémentation stricte de la confidentialité des données via Identity. Optimisation des requêtes SQL avec Entity Framework pour traiter de gros volumes de données.",
-          technologies: ["C#", "ASP.NET Core 8", "Entity Framework", "SQL Server"],
-          github: "https://github.com/Meta-tomm/MEDITRACK.git",
-          demo: null,
-          status: "academic",
-          gradient: "from-green-500 to-emerald-500"
-        },
-        {
-          id: 4,
-          title: "DataFin Predictor - Analyse de Données",
-          description: "Script d'automatisation pour l'analyse de flux de trésorerie. Utilisation de techniques de machine learning pour prédire les tendances financières et optimiser la gestion budgétaire.",
-          technologies: ["Python", "Pandas", "Scikit-learn"],
-          github: null,
-          demo: null,
-          status: "academic",
-          gradient: "from-orange-500 to-red-500"
-        },
-        {
-          id: 5,
-          title: "BankSecure - Système Bancaire",
-          description: "API REST sécurisée pour gestion de transactions bancaires avec authentification JWT et système de micro-services. Gestion des comptes, virements, historique des transactions avec traçabilité complète et respect des normes de sécurité bancaire.",
-          technologies: ["Java", "Spring Boot", "PostgreSQL", "JWT"],
-          github: "https://github.com/Meta-tomm/BANKSECURE-JAVA-SPRING-TSX.git",
-          demo: null,
-          status: "academic",
-          gradient: "from-indigo-500 to-blue-500"
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_URL}/admin/projects`, {
+        headers: {
+          'x-admin-secret': adminSecret
         }
-      ];
-      setProjects(defaultProjects);
-      localStorage.setItem('portfolio_projects', JSON.stringify(defaultProjects));
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.data) {
+          setProjects(data.data);
+        }
+      } else if (response.status === 401 || response.status === 403) {
+        setError('Session expirée. Veuillez vous reconnecter.');
+        setIsAuthenticated(false);
+        sessionStorage.removeItem('admin_secret');
+      }
+    } catch (error) {
+      console.error('Failed to load projects:', error);
+      setError('Erreur de chargement des projets');
+    } finally {
+      setLoading(false);
+    }
+  }, [adminSecret, API_URL]);
+
+  useEffect(() => {
+    // Check if user is already authenticated
+    const savedSecret = sessionStorage.getItem('admin_secret');
+    if (savedSecret) {
+      setAdminSecret(savedSecret);
+      setIsAuthenticated(true);
     }
   }, []);
 
   useEffect(() => {
-    // Vérifier si l'utilisateur est déjà authentifié
-    const authSession = localStorage.getItem('admin_auth_session');
-    if (authSession === 'authenticated') {
-      setIsAuthenticated(true);
+    if (isAuthenticated && adminSecret) {
       loadProjects();
     }
-  }, [loadProjects]);
+  }, [isAuthenticated, adminSecret, loadProjects]);
 
   const handleLogin = (e) => {
     e.preventDefault();
     setError('');
 
     if (password === ADMIN_PASSWORD) {
-      setIsAuthenticated(true);
-      localStorage.setItem('admin_auth_session', 'authenticated');
-      loadProjects();
+      // For backend API, we need the admin secret
+      const secret = prompt('Entrez le secret admin (x-admin-secret):');
+      if (secret) {
+        setAdminSecret(secret);
+        setIsAuthenticated(true);
+        sessionStorage.setItem('admin_secret', secret);
+      } else {
+        setError('Secret admin requis');
+      }
     } else {
       setError('Mot de passe incorrect');
       setPassword('');
@@ -131,46 +83,108 @@ const Admin = () => {
 
   const handleLogout = () => {
     setIsAuthenticated(false);
-    localStorage.removeItem('admin_auth_session');
+    sessionStorage.removeItem('admin_secret');
+    setAdminSecret('');
     setPassword('');
+    setProjects([]);
   };
 
-  const saveProjects = (updatedProjects) => {
-    localStorage.setItem('portfolio_projects', JSON.stringify(updatedProjects));
-    setProjects(updatedProjects);
-    // Déclencher un événement pour mettre à jour Project.jsx
-    window.dispatchEvent(new Event('projectsUpdated'));
+  const handleAddProject = async (projectData) => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_URL}/admin/projects`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-secret': adminSecret
+        },
+        body: JSON.stringify(projectData)
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          await loadProjects();
+          setShowProjectForm(false);
+          // Trigger event for frontend update
+          window.dispatchEvent(new Event('projectsUpdated'));
+        }
+      } else {
+        const data = await response.json();
+        setError(data.message || 'Erreur lors de l\'ajout du projet');
+      }
+    } catch (error) {
+      console.error('Error adding project:', error);
+      setError('Erreur lors de l\'ajout du projet');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleAddProject = (projectData) => {
-    const newProject = {
-      ...projectData,
-      id: Date.now()
-    };
-    const updatedProjects = [...projects, newProject];
-    saveProjects(updatedProjects);
-    setShowProjectForm(false);
+  const handleUpdateProject = async (projectData) => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_URL}/admin/projects/${editingProject._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-secret': adminSecret
+        },
+        body: JSON.stringify(projectData)
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          await loadProjects();
+          setEditingProject(null);
+          setShowProjectForm(false);
+          // Trigger event for frontend update
+          window.dispatchEvent(new Event('projectsUpdated'));
+        }
+      } else {
+        const data = await response.json();
+        setError(data.message || 'Erreur lors de la mise à jour du projet');
+      }
+    } catch (error) {
+      console.error('Error updating project:', error);
+      setError('Erreur lors de la mise à jour du projet');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleUpdateProject = (projectData) => {
-    const updatedProjects = projects.map(p =>
-      p.id === editingProject.id ? { ...projectData, id: editingProject.id } : p
-    );
-    saveProjects(updatedProjects);
-    setEditingProject(null);
-    setShowProjectForm(false);
-  };
-
-  const handleDeleteProject = (id) => {
+  const handleDeleteProject = async (id) => {
     if (!confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) {
       return;
     }
-    const updatedProjects = projects.filter(p => p.id !== id);
-    saveProjects(updatedProjects);
+
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_URL}/admin/projects/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'x-admin-secret': adminSecret
+        }
+      });
+
+      if (response.ok) {
+        await loadProjects();
+        // Trigger event for frontend update
+        window.dispatchEvent(new Event('projectsUpdated'));
+      } else {
+        const data = await response.json();
+        setError(data.message || 'Erreur lors de la suppression du projet');
+      }
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      setError('Erreur lors de la suppression du projet');
+    } finally {
+      setLoading(false);
+    }
   };
 
-
-  // Écran de connexion
+  // Login screen
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center px-4">
@@ -246,13 +260,21 @@ const Admin = () => {
           </button>
         </div>
 
+        {error && (
+          <div className="mb-6 p-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-lg">
+            {error}
+            <button onClick={() => setError('')} className="float-right text-red-900 dark:text-red-100">×</button>
+          </div>
+        )}
+
         <div className="mb-8">
           <button
             onClick={() => {
               setEditingProject(null);
               setShowProjectForm(true);
             }}
-            className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2"
+            disabled={loading}
+            className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50"
           >
             <FaPlus /> Ajouter un projet
           </button>
@@ -266,26 +288,38 @@ const Admin = () => {
               setShowProjectForm(false);
               setEditingProject(null);
             }}
+            loading={loading}
           />
         ) : (
-          <div className="grid gap-4">
-            {projects.map((project) => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                onEdit={(project) => {
-                  setEditingProject(project);
-                  setShowProjectForm(true);
-                }}
-                onDelete={handleDeleteProject}
-              />
-            ))}
-            {projects.length === 0 && (
-              <div className="text-center py-8 text-gray-600 dark:text-gray-400">
-                Aucun projet
+          <>
+            {loading && (
+              <div className="text-center py-8">
+                <div className="w-16 h-16 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin mx-auto mb-4" />
+                <p className="text-gray-600 dark:text-gray-400">Chargement...</p>
               </div>
             )}
-          </div>
+
+            {!loading && (
+              <div className="grid gap-4">
+                {projects.map((project) => (
+                  <ProjectCard
+                    key={project._id}
+                    project={project}
+                    onEdit={(project) => {
+                      setEditingProject(project);
+                      setShowProjectForm(true);
+                    }}
+                    onDelete={handleDeleteProject}
+                  />
+                ))}
+                {projects.length === 0 && (
+                  <div className="text-center py-8 text-gray-600 dark:text-gray-400">
+                    Aucun projet. Ajoutez-en un pour commencer.
+                  </div>
+                )}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
@@ -300,8 +334,11 @@ const ProjectCard = ({ project, onEdit, onDelete }) => {
           <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
             {project.title}
           </h3>
+          {project.subtitle && (
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{project.subtitle}</p>
+          )}
           <span className={`text-xs px-3 py-1 rounded-full font-medium ${
-            project.status === 'inProgress'
+            project.status === 'in-progress'
               ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200'
               : project.status === 'completed'
               ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200'
@@ -309,6 +346,11 @@ const ProjectCard = ({ project, onEdit, onDelete }) => {
           }`}>
             {project.status}
           </span>
+          {!project.isVisible && (
+            <span className="ml-2 text-xs px-3 py-1 rounded-full font-medium bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-200">
+              Masqué
+            </span>
+          )}
         </div>
         <div className="flex gap-2">
           <button
@@ -318,7 +360,7 @@ const ProjectCard = ({ project, onEdit, onDelete }) => {
             <FaEdit /> Modifier
           </button>
           <button
-            onClick={() => onDelete(project.id)}
+            onClick={() => onDelete(project._id)}
             className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors flex items-center gap-2"
           >
             <FaTrash /> Supprimer
@@ -329,7 +371,7 @@ const ProjectCard = ({ project, onEdit, onDelete }) => {
       <p className="text-gray-700 dark:text-gray-300 mb-4">{project.description}</p>
 
       <div className="flex flex-wrap gap-2 mb-4">
-        {project.technologies?.map((tech, index) => (
+        {project.tags?.map((tech, index) => (
           <span
             key={index}
             className="text-xs px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
@@ -339,7 +381,7 @@ const ProjectCard = ({ project, onEdit, onDelete }) => {
         ))}
       </div>
 
-      <div className="flex gap-2 text-sm text-gray-600 dark:text-gray-400">
+      <div className="flex gap-4 text-sm text-gray-600 dark:text-gray-400">
         {project.github && <span>GitHub: {project.github}</span>}
         {project.demo && <span>Demo: {project.demo}</span>}
       </div>
@@ -347,17 +389,18 @@ const ProjectCard = ({ project, onEdit, onDelete }) => {
   );
 };
 
-const ProjectForm = ({ project, onSave, onCancel }) => {
+const ProjectForm = ({ project, onSave, onCancel, loading }) => {
   const [formData, setFormData] = useState(project || {
     title: '',
+    subtitle: '',
     description: '',
-    technologies: [],
+    tags: [],
     github: '',
     demo: '',
-    status: 'inProgress',
+    status: 'in-progress',
     gradient: 'from-blue-500 to-cyan-500',
-    hasGallery: false,
-    screenshots: []
+    isVisible: true,
+    order: 0
   });
 
   const [techInput, setTechInput] = useState('');
@@ -371,7 +414,7 @@ const ProjectForm = ({ project, onSave, onCancel }) => {
     if (techInput.trim()) {
       setFormData({
         ...formData,
-        technologies: [...(formData.technologies || []), techInput.trim()]
+        tags: [...(formData.tags || []), techInput.trim()]
       });
       setTechInput('');
     }
@@ -380,7 +423,7 @@ const ProjectForm = ({ project, onSave, onCancel }) => {
   const removeTechnology = (index) => {
     setFormData({
       ...formData,
-      technologies: formData.technologies.filter((_, i) => i !== index)
+      tags: formData.tags.filter((_, i) => i !== index)
     });
   };
 
@@ -393,7 +436,7 @@ const ProjectForm = ({ project, onSave, onCancel }) => {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-            Titre
+            Titre *
           </label>
           <input
             type="text"
@@ -406,7 +449,19 @@ const ProjectForm = ({ project, onSave, onCancel }) => {
 
         <div>
           <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-            Description
+            Sous-titre
+          </label>
+          <input
+            type="text"
+            value={formData.subtitle || ''}
+            onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+            Description *
           </label>
           <textarea
             value={formData.description}
@@ -439,7 +494,7 @@ const ProjectForm = ({ project, onSave, onCancel }) => {
             </button>
           </div>
           <div className="flex flex-wrap gap-2">
-            {formData.technologies?.map((tech, index) => (
+            {formData.tags?.map((tech, index) => (
               <span
                 key={index}
                 className="text-xs px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 flex items-center gap-2"
@@ -483,19 +538,33 @@ const ProjectForm = ({ project, onSave, onCancel }) => {
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-            Statut
-          </label>
-          <select
-            value={formData.status}
-            onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-          >
-            <option value="inProgress">En cours</option>
-            <option value="completed">Terminé</option>
-            <option value="academic">Académique</option>
-          </select>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+              Statut
+            </label>
+            <select
+              value={formData.status}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+            >
+              <option value="in-progress">En cours</option>
+              <option value="completed">Terminé</option>
+              <option value="academic">Académique</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+              Ordre d'affichage
+            </label>
+            <input
+              type="number"
+              value={formData.order || 0}
+              onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) })}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+            />
+          </div>
         </div>
 
         <div>
@@ -512,20 +581,36 @@ const ProjectForm = ({ project, onSave, onCancel }) => {
             <option value="from-green-500 to-emerald-500">Vert → Émeraude</option>
             <option value="from-orange-500 to-red-500">Orange → Rouge</option>
             <option value="from-yellow-500 to-orange-500">Jaune → Orange</option>
+            <option value="from-indigo-500 to-blue-500">Indigo → Bleu</option>
           </select>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="isVisible"
+            checked={formData.isVisible !== false}
+            onChange={(e) => setFormData({ ...formData, isVisible: e.target.checked })}
+            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+          />
+          <label htmlFor="isVisible" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            Visible sur le site
+          </label>
         </div>
 
         <div className="flex gap-4 pt-4">
           <button
             type="submit"
-            className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors font-medium"
+            disabled={loading}
+            className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors font-medium disabled:opacity-50"
           >
-            {project ? 'Mettre à jour' : 'Ajouter'}
+            {loading ? 'Enregistrement...' : (project ? 'Mettre à jour' : 'Ajouter')}
           </button>
           <button
             type="button"
             onClick={onCancel}
-            className="flex-1 px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors font-medium"
+            disabled={loading}
+            className="flex-1 px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors font-medium disabled:opacity-50"
           >
             Annuler
           </button>

@@ -45,6 +45,12 @@ export default function Analytics() {
       setFact({
         text: "The world's oldest known living tree is over 5,000 years old and is located in California."
       });
+      setNasa({
+        title: "La Nébuleuse de la Tête de Cheval",
+        url: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=800&q=80",
+        explanation: "Cette magnifique nébuleuse située dans la constellation d'Orion est l'une des structures les plus photographiées de l'espace. Les nuages sombres de gaz et de poussière créent cette silhouette distinctive.",
+        date: "2024-12-28"
+      });
 
       // Stop loading after 2 seconds max
       const timeout = setTimeout(() => {
@@ -61,6 +67,26 @@ export default function Analytics() {
           }
         } catch (err) {
           console.log('Quote API failed, using fallback');
+        }
+
+        // Try to fetch NASA APOD
+        try {
+          const nasaApiKey = import.meta.env.VITE_NASA_API_KEY || 'DEMO_KEY';
+          const nasaRes = await fetch(
+            `https://api.nasa.gov/planetary/apod?api_key=${nasaApiKey}`,
+            { signal: AbortSignal.timeout(3000) }
+          );
+          if (nasaRes.ok) {
+            const nasaData = await nasaRes.json();
+            setNasa({
+              title: nasaData.title,
+              url: nasaData.url,
+              explanation: nasaData.explanation,
+              date: nasaData.date
+            });
+          }
+        } catch (err) {
+          console.log('NASA API failed');
         }
 
         // Try to fetch crypto

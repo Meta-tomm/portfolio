@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import rateLimit from 'express-rate-limit';
 import connectDB from './config/database.js';
 import analyticsRoutes from './routes/analyticsRoutes.js';
+import projectRoutes from './routes/projectRoutes.js';
 
 // Charger les variables d'environnement
 dotenv.config();
@@ -36,6 +37,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api', projectRoutes);
 
 // Route de test
 app.get('/api/health', (req, res) => {
