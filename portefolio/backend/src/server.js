@@ -13,6 +13,9 @@ dotenv.config();
 // Créer l'application Express
 const app = express();
 
+// Trust proxy for Fly.io (required for rate limiting and CORS)
+app.set('trust proxy', true);
+
 // Connecter à la base de données
 connectDB();
 
