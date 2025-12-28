@@ -41,20 +41,29 @@ export default function Analytics() {
     const fetchAllData = async () => {
       setLoading(true);
 
-      // Fetch quote of the day
+      // Fetch quote - using ZenQuotes API (more reliable)
       try {
-        const quoteRes = await fetch('https://api.quotable.io/random');
-        const quoteData = await quoteRes.json();
-        setQuote(quoteData);
+        const quoteRes = await fetch('https://zenquotes.io/api/random');
+        const quoteArr = await quoteRes.json();
+        if (quoteArr && quoteArr[0]) {
+          setQuote({ content: quoteArr[0].q, author: quoteArr[0].a });
+        }
       } catch (error) {
         console.error('Failed to fetch quote:', error);
+        // Fallback quote
+        setQuote({
+          content: "The only way to do great work is to love what you do.",
+          author: "Steve Jobs"
+        });
       }
 
-      // Fetch NASA Astronomy Picture of the Day
+      // Fetch NASA - using fallback data if fails
       try {
         const nasaRes = await fetch('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY');
-        const nasaData = await nasaRes.json();
-        setNasa(nasaData);
+        if (nasaRes.ok) {
+          const nasaData = await nasaRes.json();
+          setNasa(nasaData);
+        }
       } catch (error) {
         console.error('Failed to fetch NASA data:', error);
       }
@@ -70,13 +79,21 @@ export default function Analytics() {
         console.error('Failed to fetch crypto data:', error);
       }
 
-      // Fetch random fact
+      // Fetch random fact - using API Ninjas
       try {
-        const factRes = await fetch('https://uselessfacts.jsph.pl/random.json?language=en');
-        const factData = await factRes.json();
-        setFact(factData);
+        const factRes = await fetch('https://api.api-ninjas.com/v1/facts', {
+          headers: { 'X-Api-Key': 'DEMO' }
+        });
+        const factArr = await factRes.json();
+        if (factArr && factArr[0]) {
+          setFact({ text: factArr[0].fact });
+        }
       } catch (error) {
         console.error('Failed to fetch fact:', error);
+        // Fallback fact
+        setFact({
+          text: "The world's oldest known living tree is over 5,000 years old and is located in California."
+        });
       }
 
       setLoading(false);
@@ -243,7 +260,7 @@ export default function Analytics() {
                 </h3>
               </div>
 
-              {nasa.url.match(/\.(jpg|jpeg|png|gif)$/i) ? (
+              {nasa.url && nasa.url.match(/\.(jpg|jpeg|png|gif)$/i) ? (
                 <img
                   src={nasa.url}
                   alt={nasa.title}
