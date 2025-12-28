@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useTheme } from "../../context/themecontext";
-import { useScrollAnimation } from "../../hooks/UseScrollAnimation";
 import { Quote, Sparkles, Image as ImageIcon, Bitcoin, Rocket, TrendingUp } from "lucide-react";
 
 // Interesting data from public APIs
@@ -27,7 +26,6 @@ interface RandomFact {
 
 // Fun Data Dashboard - Display interesting real-time data from public APIs
 export default function Analytics() {
-  const [ref, isVisible] = useScrollAnimation();
   const { isDark } = useTheme();
 
   const [quote, setQuote] = useState<QuoteData | null>(null);
@@ -117,11 +115,8 @@ export default function Analytics() {
   return (
     <section
       id="analytics"
-      ref={ref}
-      className={`relative min-h-screen py-20 transition-all duration-1000 overflow-hidden ${
+      className={`relative min-h-screen py-20 overflow-hidden ${
         isDark ? "bg-gray-900" : "bg-gray-50"
-      } ${
-        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
       }`}
     >
       {/* Background decoration */}
