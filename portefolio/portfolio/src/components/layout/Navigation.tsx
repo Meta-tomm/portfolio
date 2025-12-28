@@ -89,6 +89,17 @@ function Navigation() {
               {t("nav.projects")}
             </a>
             <a
+              href="#analytics"
+              onClick={(e) => handleNavClick(e, 'analytics')}
+              className={`${
+                isDark
+                  ? "text-gray-300 hover:text-white"
+                  : "text-gray-600 hover:text-gray-900"
+              } transition-colors inline-block text-center min-w-[80px]`}
+            >
+              Data
+            </a>
+            <a
               href="#contact"
               onClick={(e) => handleNavClick(e, 'contact')}
               className={`${
@@ -226,6 +237,15 @@ function Navigation() {
               } transition-colors`}
             >
               {t("nav.projects")}
+            </a>
+            <a
+              href="#analytics"
+              onClick={(e) => handleNavClick(e, 'analytics')}
+              className={`block py-2 ${
+                isDark ? "text-gray-300" : "text-gray-700"
+              } transition-colors`}
+            >
+              Data
             </a>
             <a
               href="#contact"
